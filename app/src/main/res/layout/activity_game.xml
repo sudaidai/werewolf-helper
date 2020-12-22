@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.example.werewolfs.wereWolfDev.viewModel.GameViewModel" />
+        <variable
+            name="CBField"
+            type="com.example.werewolfs.wereWolfDev.viewModel.GameViewModel.CtrlBtnField" />
+
+        <variable name="handlers" type="com.example.werewolfs.wereWolfDev.handler.GameHandlers"/>
+    </data>
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".game.view.GameActivity">
+
+        <LinearLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:background="#7E97E31C"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@{viewModel.announcement}"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/toNight"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="@{() -> viewModel.onDayClick()}"
+                android:clickable="true"
+                android:background="@{CBField.background ? @color/white : @color/black}"
+                android:text="@{CBField.text}"
+                android:textColor="@{CBField.textColor}"
+                android:textSize="35sp"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:rotation="180"
+                android:text="@{viewModel.announcement}"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="50dp"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/topText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:background="#E6FFFFFF"
+            android:gravity="center"
+            android:rotation="180"
+            android:text="請問是否為你的狼隊友"
+            android:textSize="30dp"
+            android:visibility="visible"></TextView>
+
+        <TextView
+            android:id="@+id/downText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:background="#E6FFFFFF"
+            android:gravity="center"
+            android:text="請問是否"
+            android:textSize="30dp"
+            android:visibility="visible">
+
+        </TextView>
+
+    </TableLayout>
+
+</RelativeLayout>
+</layout>

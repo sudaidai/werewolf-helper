@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15sp">
+
+        <Button
+            android:id="@+id/btn_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:padding="10sp"
+            android:text="返回選擇人數"
+            android:textSize="20sp">
+
+        </Button>
+
+        <TextView
+            android:id="@+id/choose_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10sp"
+            android:text="選擇角色"
+            android:textSize="20dp"></TextView>
+
+        <TextView
+            android:id="@+id/total_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10sp"
+            android:text="已選擇 : 0"
+            android:textSize="20dp"></TextView>
+
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/wolf_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:shrinkColumns="0"
+        android:stretchColumns="*">
+
+        <TableRow android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/text_wolf_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="一般狼人 : "
+                android:textSize="20dp"
+                tools:ignore="DuplicateIds"></TextView>
+
+            <Button
+                android:id="@+id/btn_reduce_wolf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="-"
+                android:textSize="20dp"></Button>
+
+            <TextView
+                android:id="@+id/text_wolf_counts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="4"
+                android:textSize="20dp"
+                tools:ignore="DuplicateIds"></TextView>
+
+            <Button
+                android:id="@+id/btn_add_wolf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="+"
+                android:textSize="20dp"></Button>
+        </TableRow>
+    </TableLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:height="100px"
+        android:orientation="horizontal"
+        android:padding="10sp">
+
+        <RadioGroup
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <CheckBox
+                android:id="@+id/seer"
+                android:layout_width="188dp"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="預言家" />
+
+            <CheckBox
+                android:id="@+id/witch"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="女巫" />
+
+            <CheckBox
+                android:id="@+id/hunter"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="獵人" />
+
+            <CheckBox
+                android:id="@+id/knight"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="騎士" />
+
+            <CheckBox
+                android:id="@+id/idiot"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="白癡" />
+
+            <CheckBox
+                android:id="@+id/forbiddenElder"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="禁言長老" />
+
+            <CheckBox
+                android:id="@+id/guard"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="守衛" />
+
+            <CheckBox
+                android:id="@+id/prettyWolf"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="狼美人" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <CheckBox
+                android:id="@+id/bear"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="熊" />
+
+            <CheckBox
+                android:id="@+id/foxGod"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="狐仙" />
+
+            <CheckBox
+                android:id="@+id/magician"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="魔術師" />
+
+            <CheckBox
+                android:id="@+id/bombMan"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="炸彈人" />
+
+            <CheckBox
+                android:id="@+id/tombKeeper"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="守墓人" />
+
+            <CheckBox
+                android:id="@+id/shaman"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="通靈師" />
+
+            <CheckBox
+                android:id="@+id/gargoyle"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="石像鬼" />
+
+            <CheckBox
+                android:id="@+id/hiddenWolf"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_margin="1sp"
+                android:text="隱狼" />
+        </RadioGroup>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="10sp">
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:onClick="onGameStart"
+            android:text="遊戲開始"></Button>
+
+        <Switch
+            android:id="@+id/witchSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="女巫【不可】自救" />
+
+        <Switch
+            android:id="@+id/killSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="採取【屠邊】規則" />
+
+        <Switch
+            android:id="@+id/prettyWolfSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="狼美人夜晚死亡【不可】發動技能" />
+
+        <Switch
+            android:id="@+id/hunterDoubleKillSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="獵人【沒有】雙面刀" />
+
+        <Switch
+            android:id="@+id/idiotDoubleKillSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="白癡【沒有】雙面刀" />
+    </LinearLayout>
+
+
+
+</LinearLayout>
+
+</layout>
