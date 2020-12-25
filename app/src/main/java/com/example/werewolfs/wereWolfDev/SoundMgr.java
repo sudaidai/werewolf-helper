@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SoundMgr {
+
+    private final Context mContext;
     public MediaPlayer mediaPlayer;
     private SoundPool sp;
     private HashMap<Integer, Integer> soundID = new HashMap<Integer, Integer>();
@@ -19,12 +21,13 @@ public class SoundMgr {
     private List<MediaPlayer> cd = new ArrayList<>();
 
     public SoundMgr(Context context){
+        mContext = context;
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
     }
 
-    public void playSound(Context context, int _id){
-        mediaPlayer = MediaPlayer.create(context, _id);
+    public void playSound(int _id){
+        mediaPlayer = MediaPlayer.create(mContext, _id);
         cd.add(mediaPlayer);
         order += 1;
         if(order != 1){

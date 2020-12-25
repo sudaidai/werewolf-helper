@@ -1,4 +1,4 @@
-package com.example.werewolfs.activity;
+package com.example.werewolfs.wereWolfDev.activity;
 /** 用途 : 一般遊戲選擇人數*/
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,8 +11,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.werewolfs.R;
+import com.example.werewolfs.wereWolfDev.constant.Static;
+import com.example.werewolfs.wereWolfDev.viewModel.NumOfPeopleViewModel;
 
 public class ActivityForNumOfPeople extends AppCompatActivity {
+
+    NumOfPeopleViewModel viewModel;
 
     private TextView tv_show ;
     private int countPe = 10 ;
@@ -24,6 +28,8 @@ public class ActivityForNumOfPeople extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_for_num_of_people);
+
+        viewModel = new NumOfPeopleViewModel();
         Button btn_b = findViewById(R.id.btn_b);
         btn_b.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -59,8 +65,8 @@ public class ActivityForNumOfPeople extends AppCompatActivity {
     }
 
     public void onNextChoose(View v){
-        Intent it = new Intent(this, ActivityForNormalStart.class);
-        it.putExtra("人數", countPe);
+        viewModel.setPeoCnt(countPe);
+        Intent it = new Intent(this, ActivityForCustomGame.class);
         startActivity(it);
     }
 }

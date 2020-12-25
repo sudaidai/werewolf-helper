@@ -1,2 +1,6 @@
-package com.example.werewolfs.wereWolfDev.activity;public interface GameActivityNotify {
+package com.example.werewolfs.wereWolfDev.activity;
+
+public interface GameActivityNotify {
+
+    void notifyRepeatSelect();
 }
