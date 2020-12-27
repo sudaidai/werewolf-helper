@@ -5,10 +5,13 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.ColorRes;
@@ -25,6 +28,10 @@ import com.example.werewolfs.wereWolfDev.activity.GameActivityNotify;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
+import com.example.werewolfs.wereWolfDev.model.job.Guard;
+import com.example.werewolfs.wereWolfDev.model.job.Hunter;
+import com.example.werewolfs.wereWolfDev.model.job.Role;
+import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.model.job.Witch;
 import com.example.werewolfs.wereWolfDev.model.job.Wolf;
 
@@ -32,14 +39,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class GameViewModel extends AndroidViewModel implements GameNotify{
+public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private static final String TAG = "GameViewModel";
     private GameActivityNotify gameActivityNotify;
 
-    /** 儲存使用者行為 當前被選擇對象 上一次被選擇對象(用於單選)*/
+    /**
+     * 儲存使用者行為 當前被選擇對象 上一次被選擇對象(用於單選)
+     */
     private int selected, lastSelect;
-    /** 儲存使用行為 被選擇對象數量(用於多選)*/
+    /**
+     * 儲存使用行為 被選擇對象數量(用於多選)
+     */
     private List<Integer> seatsSelected;
 
     /**
@@ -47,15 +58,20 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
      */
     private Wolf wolves;
     private Witch witch;
+    private Seer seer;
+    private Guard guard;
+    private Hunter hunter;
 
-    /** observable object*/
-    public static class CtrlBtnField{
+    /**
+     * observable object
+     */
+    public static class CtrlBtnField {
         public final ObservableBoolean clickable = new ObservableBoolean();
         public final ObservableBoolean background = new ObservableBoolean(); //be white if true, black if false
         public final ObservableInt textColor = new ObservableInt();
         public final ObservableField<String> text = new ObservableField<>();
 
-        CtrlBtnField(boolean clickable, boolean background, int textColor, String text){
+        CtrlBtnField(boolean clickable, boolean background, int textColor, String text) {
             this.clickable.set(clickable);
             this.background.set(background);
             this.textColor.set(textColor);
@@ -63,18 +79,22 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
         }
     }
 
-    /** variable*/
+    /**
+     * variable
+     */
     private final Context mContext; //to avoid memory leaks, this must be an Application context
     private SoundMgr music;
     private ToggleButton[] tgBtnGroup;
 
-    /**observable variable*/
+    /**
+     * observable variable
+     */
     public final ObservableField<String> announcement = new ObservableField<>();
     public final ObservableField<String> checkText = new ObservableField<>();
     public final ObservableBoolean checkVisible = new ObservableBoolean();
     public final CtrlBtnField ctrlBtnField = new CtrlBtnField(true, false, Color.WHITE, "夜晚");
 
-    public GameViewModel(@NonNull Application app){
+    public GameViewModel(@NonNull Application app) {
         super(app);
         this.mContext = app.getApplicationContext();
         init();
@@ -90,23 +110,28 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
         seatsSelected = new ArrayList<>();
         wolves = new Wolf();
         witch = new Witch();
+        seer = new Seer();
+        guard = new Guard();
+        hunter = new Hunter();
         Static.dataModel.setGameNotify(this);
     }
 
     public void initSelect() {
-        selected = -1;
-        lastSelect = -1;
+        selected = 0;
+        lastSelect = 0;
     }
 
     public void initGameVariable() {
         Static.dataModel.initGameVariable();
     }
 
-    public void createSound(){ music = new SoundMgr(mContext); }
+    public void createSound() {
+        music = new SoundMgr(mContext);
+    }
 
-    public void setTgBtn(ToggleButton[] tgBtnGroup){
+    public void setTgBtn(ToggleButton[] tgBtnGroup) {
         this.tgBtnGroup = tgBtnGroup;
-        for(int i=1 ; i<=Static.dataModel.getPeoCnt() ; i++){
+        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setOnCheckedChangeListener(onSeatClick);
         }
     }
@@ -114,9 +139,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
     /**
      * 中間按鈕點擊事件
      */
-    public void onCenterClick(){
+    public void onCenterClick() {
         DataModel dataModel = Static.dataModel;
-        if(dataModel.isDay()) {
+        if (dataModel.isDay()) {
             music.playSound(R.raw.howling);
 
             dataModel.dayEnd();
@@ -124,24 +149,28 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
             ctrlBtnField.background.set(true);
             ctrlBtnField.clickable.set(false);
 
-            switch (dataModel.getStage()){
+            switch (dataModel.getStage()) {
                 case 準備開始:
-                    setAllTgBtnState(true);
+                    setAllSeatState(true);
                     setAllTgBtnStyle();
                     dataModel.setNextStage();
             }
         } else {
-            switch (dataModel.getStage()){
+            switch (dataModel.getStage()) {
                 case 守衛:
+                    guard.protect(0);
+                    if (selected != 0) {
+                        setPositionFalse(selected);
+                    }
                     break;
                 case 禁言長老:
                     break;
                 default:
-                    ctrlBtnField.text.set("夜晚");
-                    ctrlBtnField.clickable.set(false);
-                    //initSelect(); ?? TODO
-                    dataModel.setNextStage();
             }
+            initSelect();
+            dataModel.setNextStage();
+            ctrlBtnField.text.set("夜晚");
+            ctrlBtnField.clickable.set(false);
         }
     }
 
@@ -151,14 +180,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
     private CompoundButton.OnCheckedChangeListener onSeatClick = ((buttonView, isChecked) -> {
         int seat = findIndexByBtnArray(buttonView);
         Action stage = Static.dataModel.getStage();
-        Log.d(TAG, "findIndexByBtnGroup(Seat): " + seat);
 
-        if(isChecked){
+        if (isChecked) {
             checkedEvent(seat, stage);
-        }else{
-            if (Static.dataModel.isDay()){
+        } else {
+            if (Static.dataModel.isDay()) {
                 buttonView.setBackgroundColor(Color.WHITE);
-            }else{
+            } else {
                 buttonView.setBackgroundColor(Color.BLACK);
             }
             unCheckedEvent(seat, stage);
@@ -169,95 +197,135 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
         ToggleButton tgBtn = tgBtnGroup[seat];
         DataModel dataModel = Static.dataModel;
         HashMap<Action, Integer> seatRoleMap = dataModel.getSeatRoleMap();
-        switch(stage){
+        switch (stage) {
             case 狼人:
                 setColorAndTextOn(tgBtn, "狼人", Color.BLUE);
                 seatsSelected.add(seat);
-                if(seatsSelected.size() == dataModel.getWolfCnt()){
+                if (seatsSelected.size() == dataModel.getWolfCnt()) {
                     showCheckBtn("狼人為 : " + seatsSelected + " \n確認是否為您的夥伴");
-                }break;
+                }
+                break;
             case 殺人:
                 setColorAndTextOn(tgBtn, "擊殺", Color.RED);
                 choosePosition(seat);
                 break;
             case 女巫:
-                boolean witchChecked = seatRoleMap.containsKey(Action.女巫);
                 choosePosition(seat);
-                if(!witchChecked){
+                if (witch.unChecked()) {
                     setColorAndTextOn(tgBtn, "女巫", Color.BLUE);
                 } else {
-                    if(dataModel.isWitchSaveRule() && dataModel.getTurn()==1){
+                    if (dataModel.isWitchSaveRule() && dataModel.getTurn() == 1) {
                         //女巫可以自救的情況
-                        if(wolves.getKnifeOn() == seat && witch.hasHerbal()){
+                        if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
-                        }else if(seatRoleMap.get(stage) == selected){
+                        } else if (witch.getSeat() == selected) {
                             setColorAndTextOn(tgBtn, "不用藥?", Color.BLUE);
-                        }else{
+                        } else {
                             setColorAndTextOn(tgBtn, "毒殺?", Color.RED);
                         }
-                    }else{
-                        if(seatRoleMap.get(stage) == selected){
+                    } else {
+                        if (witch.getSeat() == selected) {
                             setColorAndTextOn(tgBtn, "不用藥?", Color.BLUE);
-                        }else if(wolves.getKnifeOn() == selected && witch.hasHerbal()){
+                        } else if (wolves.getKnifeOn() == selected && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
-                        }else{
+                        } else {
                             setColorAndTextOn(tgBtn, "毒殺?", Color.RED);
                         }
                     }
-                }break;
+                }
+                break;
+            case 預言家:
+                choosePosition(seat);
+                if (seer.unChecked()) {
+                    setColorAndTextOn(tgBtn, "預言家", Color.GRAY);
+                } else {
+                    setColorAndTextOn(tgBtn, "查驗", Color.BLUE);
+                }
+                break;
+            case 守衛:
+                choosePosition(seat);
+                if (guard.unChecked()) {
+                    setColorAndTextOn(tgBtn, "守衛", Color.BLUE);
+                } else {
+                    setColorAndTextOn(tgBtn, "保護", Color.GRAY);
+                }
+                break;
         }
     }
 
     private void unCheckedEvent(int seat, Action stage) {
+
+        if (stage != Action.狼人) {
+            if(seat != selected){
+                return;
+            }
+        }
+
         DataModel dataModel = Static.dataModel;
         HashMap<Action, Integer> seatRoleMap = dataModel.getSeatRoleMap();
-        switch(stage){
+        switch (stage) {
             case 狼人:
                 seatsSelected.remove(new Integer(seat));
                 break;
             case 殺人:
-                if(selected == seat){
-                    wolves.kill(seat);
-                    initSelect();
-                    music.playSound(R.raw.wolf_close);
-                    dataModel.setNextStage();
-                }break;
+                wolves.kill(seat);
+                music.playSound(R.raw.wolf_close);
+                dataModel.setNextStage();
+                break;
             case 女巫:
-                if(seat == selected) {
-                    boolean witchChecked = seatRoleMap.containsKey(Action.女巫);
-                    if (!witchChecked) {
-                        repeatSelectionCheck(seat);
-                        announcement.set("女巫請使用技能");
-                        music.playSound(R.raw.witch_skill);
-                        seatRoleMap.put(stage, seat);
-                        Log.d(TAG, "女巫為 : " + seat + "號玩家");
-                        //第一輪尚未確定誰是女巫，確認後跳出被刀的對象
-                        tgBtnGroup[wolves.getKnifeOn()].setBackgroundColor(Color.RED);
-                    } else {
-                        //如果女巫沒有藥，在進入女巫stage不能用藥對象要被鎖定(notifyStageChanged)
-                        if(witch.hasHerbal() && wolves.getKnifeOn() == seat){
-                            witch.useHerbal(seat);
-                        }else if(witch.hasPoison() && seatRoleMap.get(stage) != seat){
-                            witch.usePoison(seat);
-                        }
-                        music.cancelSound();
-                        dataModel.setNextStage();
+                if (witch.getSeat() == 0) {
+                    useYourSkill(witch, seat);
+                    //第一輪尚未確定誰是女巫，確認後跳出被刀的對象
+                    tgBtnGroup[wolves.getKnifeOn()].setBackgroundColor(Color.RED);
+                } else {
+                    //如果女巫沒有藥，在進入女巫stage不能用藥對象要被鎖定(notifyStageChanged)
+                    if (witch.hasHerbal() && wolves.getKnifeOn() == seat) {
+                        witch.useHerbal(seat);
+                    } else if (witch.hasPoison() && seatRoleMap.get(stage) != seat) {
+                        witch.usePoison(seat);
                     }
-                    initSelect();
-                }break;
+                    closeYourEyes(witch);
+                }
+                break;
+            case 預言家:
+                if (seer.getSeat() == 0) {
+                    useYourSkill(seer, seat);
+                } else {
+                    boolean isWolf = seer.isWolf(seat);
+                    gameActivityNotify.notifySeerAsk(isWolf, seat, seer);
+//                        setPositionFalse(seat); ??
+                }
+                break;
+            case 守衛:
+                if (guard.getSeat() == 0) {
+                    useYourSkill(guard, seat);
+                    ctrlBtnField.text.set("空守");
+                    ctrlBtnField.clickable.set(true);
+                } else {
+                    //守衛不能同守 解除座位鎖定
+                    if (guard.getIsProtected() != 0) {
+                        tgBtnGroup[guard.getIsProtected()].setClickable(true);
+                    }
+                    guard.protect(seat);
+                    ctrlBtnField.text.set("夜晚");
+                    ctrlBtnField.clickable.set(false);
+                    closeYourEyes(guard);
+                }
+                break;
         }
+        initSelect();
     }
 
     /**
      * 中央提示按鈕點擊事件
      */
 
-    public void onYesClick(){
+    public void onYesClick() {
         DataModel dataModel = Static.dataModel;
         List<Integer> wolves = dataModel.getWolfGroup();
         wolves.addAll(seatsSelected);
 
-        for(int seat : wolves){
+        for (int seat : wolves) {
             dataModel.getSeatRoleMap().put(Action.狼人, seat);
             setPositionFalse(seat);
         }
@@ -266,26 +334,25 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
         Static.dataModel.setNextStage();
     }
 
-    public void onNoClick(){
+    public void onNoClick() {
         List<Integer> temp = new ArrayList<>();
         temp.addAll(seatsSelected);
-        for(int seat : temp){
+        for (int seat : temp) {
             setPositionFalse(seat);
         }
         checkVisible.set(false);
     }
 
 
-
     /**
      * 處理玩家選擇行為顯示
+     *
      * @param selected
      */
     public void choosePosition(int selected) {
-        if (this.selected == -1) {
-            this.selected = selected;
-        } else {
-            this.selected = selected;
+        this.selected = selected;
+        if (lastSelect != 0) {
+            Log.d(TAG, "selected->" + this.selected + " last_select->" + lastSelect);
             setPositionFalse(lastSelect);
         }
         lastSelect = selected;
@@ -293,6 +360,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
 
     /**
      * 取消選取行為顯示內容
+     *
      * @param pos
      */
     public void setPositionFalse(int pos) {
@@ -307,10 +375,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
 
     /**
      * 改變全部座位可否被點擊
+     *
      * @param bool
      */
-    private void setAllTgBtnState(boolean bool){
-        for(int i=1 ; i<=Static.dataModel.getPeoCnt() ; i++){
+    private void setAllSeatState(boolean bool) {
+        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setClickable(bool);
         }
     }
@@ -318,17 +387,17 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
     /**
      * 改變全部座位顏色
      */
-    private void setAllTgBtnStyle(){
+    private void setAllTgBtnStyle() {
         int textColor, bgColor;
-        if(Static.dataModel.isDay()){
+        if (Static.dataModel.isDay()) {
             textColor = Color.BLACK;
             bgColor = Color.WHITE;
-        }else{
+        } else {
             textColor = Color.WHITE;
             bgColor = Color.BLACK;
         }
 
-        for(int i=1 ; i<=Static.dataModel.getPeoCnt() ; i++){
+        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setTextColor(textColor);
             tgBtnGroup[i].setBackgroundColor(bgColor);
         }
@@ -336,6 +405,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
 
     /**
      * 設置單個按鈕點開的顏色與文字
+     *
      * @param tgBtn
      * @param text
      * @param color
@@ -347,18 +417,20 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
 
     /**
      * 從按鈕群找到按鈕的index
+     *
      * @param btn
      * @return
      */
-    private int findIndexByBtnArray(CompoundButton btn){
-        for(int i=0 ; i<tgBtnGroup.length ; i++){
-            if(tgBtnGroup[i] == btn) return i;
+    private int findIndexByBtnArray(CompoundButton btn) {
+        for (int i = 0; i < tgBtnGroup.length; i++) {
+            if (tgBtnGroup[i] == btn) return i;
         }
         return -1;
     }
 
     /**
      * 跳出中央選擇提示框
+     *
      * @param checkText
      */
     private void showCheckBtn(String checkText) {
@@ -406,6 +478,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
 
     /**
      * 檢查玩家確認後腳色是否重複
+     *
      * @param seat
      */
     public void repeatSelectionCheck(int seat) {
@@ -416,23 +489,59 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
         }
     }
 
-
-
-
-
-    @Override
-    public void notifyAnnouncementChange(String announcement) {
-        this.announcement.set(announcement);
+    /**
+     * 初始化按鈕點擊 讓死亡玩家改變顯示 不可被點擊
+     */
+    public void initSeatState() {
+        setAllSeatState(true);
+        for (int seat : Static.dataModel.getDieList()) {
+            tgBtnGroup[seat].setClickable(false);
+            tgBtnGroup[seat].setBackgroundColor(Color.RED);
+        }
     }
 
-    @Override
-    public void notifyPlaySound(int _id){
-        music.playSound(_id);
+    private void openYourEyes(Role role) {
+        announcement.set(role.stage + "請睜眼");
+        music.playSound(role.openSound);
+        if (Static.dataModel.getDieList().contains(role.getSeat())) {
+            skipStage();
+            setAllSeatState(false);
+        } else {
+            initSeatState(); // ? TODO
+            String btnText = "";
+            switch (role.stage) {
+                case 守衛:
+                    btnText = "空守";
+                    ctrlBtnField.clickable.set(true);
+                    break;
+                default:
+                    btnText = "夜晚";
+            }
+            ctrlBtnField.text.set(btnText);
+        }
     }
+
+    private void useYourSkill(Role role, int seat) {
+        repeatSelectionCheck(seat);
+        Action stage = role.stage;
+        announcement.set(stage + "請使用技能");
+        music.playSound(role.skillSound);
+        Static.dataModel.getSeatRoleMap().put(stage, seat);
+        role.setSeat(seat);
+        Log.d(TAG, stage + "為 : " + seat + "號玩家");
+    }
+
+    public void closeYourEyes(Role role) {
+        music.cancelSound();
+        music.playSound(role.closeSound);
+        Static.dataModel.setNextStage();
+    }
+
 
     @Override
     public void notifyStageChanged(Action stage) {
-        switch (stage){
+        DataModel dataModel = Static.dataModel;
+        switch (stage) {
             case 狼人:
                 announcement.set("狼人請睜眼");
                 music.playSound(R.raw.wolf_open);
@@ -442,31 +551,45 @@ public class GameViewModel extends AndroidViewModel implements GameNotify{
                 music.playSound(R.raw.wolf_kill);
                 break;
             case 女巫:
-                if(Static.dataModel.getTurn() != 1){
+                if (Static.dataModel.getTurn() != 1) {
                     /**
                      * 不是第一個輪次時，女巫可能沒有藥，控制女巫可以點選的座位
                      */
-                    int seat = Static.dataModel.getSeatRoleMap().get(stage);
-                    if(Static.dataModel.getDieList().contains(seat)){
+                    int seat = witch.getSeat();
+                    if (dataModel.getDieList().contains(seat)) {
                         skipStage();
-                        setAllTgBtnState(false);
-                    }else{
+                        setAllSeatState(false);
+                    } else {
                         stageDelay(stage);
-                        if(!witch.hasPoison()){
-                            setAllTgBtnState(false);
+                        if (!witch.hasPoison()) {
+                            setAllSeatState(false);
                             tgBtnGroup[seat].setClickable(true);
-                            if(witch.hasHerbal()){
+                            if (witch.hasHerbal()) {
                                 tgBtnGroup[wolves.getKnifeOn()].setClickable(true);
-                            }else{
+                            } else {
                                 announcement.set("沒藥了點自己");
                             }
                         }
                     }
-                }else{
+                } else {
                     stageDelay(stage);
                 }
                 music.playSound(R.raw.witch_open);
                 break;
+            case 預言家:
+                openYourEyes(seer);
+                break;
+            case 守衛:
+                openYourEyes(guard);
+                //守衛不能同守 鎖定座位
+                if (guard.getIsProtected() != 0) {
+                    tgBtnGroup[guard.getIsProtected()].setClickable(false);
+                }
+                break;
+            case 獵人:
+                openYourEyes(hunter);
+                break;
+
         }
     }
 }

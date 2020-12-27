@@ -1,6 +1,9 @@
 package com.example.werewolfs.wereWolfDev.model.job;
 
-public class Witch {
+import com.example.werewolfs.R;
+import com.example.werewolfs.wereWolfDev.constant.Action;
+
+public class Witch extends Role{
 
     private boolean hasHerbal;
     private boolean hasPoison;
@@ -9,8 +12,12 @@ public class Witch {
     private int isPoisoned;
 
     public Witch(){
+        stage = Action.女巫;
         hasHerbal = true;
         hasPoison = true;
+        openSound = R.raw.witch_open;
+        skillSound = R.raw.witch_skill;
+        closeSound = R.raw.witch_close;
     }
 
     public void useHerbal(int seat){
@@ -33,5 +40,9 @@ public class Witch {
 
     public int getIsSave() {
         return isSaved;
+    }
+
+    public int getIsPoisoned() {
+        return isPoisoned;
     }
 }

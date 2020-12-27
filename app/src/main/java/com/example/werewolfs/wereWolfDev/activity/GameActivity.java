@@ -3,7 +3,9 @@ package com.example.werewolfs.wereWolfDev.activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
@@ -16,6 +18,7 @@ import com.example.werewolfs.databinding.ActivityGameBinding;
 import com.example.werewolfs.wereWolfDev.SoundMgr;
 import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
+import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.viewModel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity implements GameActivityNotify{
@@ -95,12 +98,37 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setIcon(R.drawable.ic_launcher_background)
                 .setTitle("身分重複")
                 .setMessage("" + "遊戲自動重新開始，別亂按好嗎 (☞ﾟ∀ﾟ)ﾟ∀ﾟ)☞")
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
+                .setPositiveButton("ok", (dialog, which) -> finish())
                 .show();
+    }
+
+    @Override
+    public void notifySeerAsk(boolean isWolf, int seat, Seer seer){
+        String seerMessage = "";
+        ImageView iv = new ImageView(this);
+        if (isWolf) {
+            seerMessage = seat + "號玩家是位骯髒的狼人OvO";
+            iv.setImageResource(R.drawable.night);
+
+        } else {
+            seerMessage = seat + "號玩家是位正直的好人●v●";
+            iv.setImageResource(R.drawable.day);
+        }
+
+        AlertDialog seerDialog = new AlertDialog.Builder(GameActivity.this)
+                .setCancelable(false).setView(iv)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle("查驗結果為:" + seerMessage)
+                .setPositiveButton("ok", null)
+                .create();
+        seerDialog.show();
+
+        new CountDownTimer(3000, 1000) {
+            public void onTick(long millisUntilFinished) {}
+            public void onFinish() {
+                seerDialog.cancel();
+                gameViewModel.closeYourEyes(seer);
+            }
+        }.start();
     }
 }

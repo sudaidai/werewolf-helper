@@ -1,5 +1,10 @@
 package com.example.werewolfs.wereWolfDev.constant;
 
+import com.example.werewolfs.wereWolfDev.model.job.Guard;
+import com.example.werewolfs.wereWolfDev.model.job.Role;
+import com.example.werewolfs.wereWolfDev.model.job.Seer;
+import com.example.werewolfs.wereWolfDev.model.job.Witch;
+
 public enum Action {
     //有順序的，加職業的時候要按晚上睜眼順序放
     準備開始(0), 狼人(1), 殺人(2), 隱狼(3), 狼美人(4), 狐仙(5), 惡靈騎士(6),
@@ -9,9 +14,15 @@ public enum Action {
     石像鬼2(25), 白天(26);
 
     private int order;
+    private Role role;
 
     Action(int order) {
         this.order = order;
+    }
+
+    Action(int order, Role role) {
+        this.order = order;
+        this.role = role;
     }
 
     /** 確認身分後晚上不用睜眼的階段*/
@@ -21,5 +32,9 @@ public enum Action {
             return true;
         }
         return false;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }
