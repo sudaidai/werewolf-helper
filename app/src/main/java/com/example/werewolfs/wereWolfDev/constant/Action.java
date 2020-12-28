@@ -1,8 +1,6 @@
 package com.example.werewolfs.wereWolfDev.constant;
 
-import com.example.werewolfs.wereWolfDev.model.job.Guard;
-import com.example.werewolfs.wereWolfDev.model.job.Role;
-import com.example.werewolfs.wereWolfDev.model.job.Seer;
+import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Witch;
 
 public enum Action {
@@ -13,8 +11,8 @@ public enum Action {
     守衛(19), 野孩子(20), 混血兒(21), 盜賊(22), 九尾妖狐(23), 通靈師(24),
     石像鬼2(25), 白天(26);
 
-    private int order;
-    private Role role;
+    public int order;
+    public Role role;
 
     Action(int order) {
         this.order = order;
@@ -32,9 +30,5 @@ public enum Action {
             return true;
         }
         return false;
-    }
-
-    public Role getRole() {
-        return role;
     }
 }

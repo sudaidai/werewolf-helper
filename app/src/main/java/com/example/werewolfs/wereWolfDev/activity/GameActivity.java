@@ -1,6 +1,7 @@
 package com.example.werewolfs.wereWolfDev.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -20,6 +21,9 @@ import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.viewModel.GameViewModel;
+
+import java.util.List;
+import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements GameActivityNotify{
 
@@ -92,6 +96,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         tgBtn.setTextSize(40.0f);
     }
 
+
     @Override
     public void notifyRepeatSelect(){
         new AlertDialog.Builder(this).setCancelable(false)
@@ -130,5 +135,41 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 gameViewModel.closeYourEyes(seer);
             }
         }.start();
+    }
+
+    @Override
+    public void notifyDaybreak(String message) {
+        new AlertDialog.Builder(this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(message)
+                .setPositiveButton("ok", null)
+                .show();
+    }
+
+    @Override
+    public void notifyFirstDaybreak(String message, List<Integer> dieList) {
+        new AlertDialog.Builder(this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(message)
+                .setPositiveButton("ok", (dialog, which) -> {
+                    String message2 = gameViewModel.checkDieList(dieList);
+                    new AlertDialog.Builder(this).setCancelable(false)
+                            .setIcon(R.drawable.ic_launcher_background)
+                            .setTitle(message2)
+                            .setPositiveButton("ok", null)
+                            .show();
+                })
+                .show();
+    }
+
+    @Override
+    public void notifyVoteCheck(int seat) {
+        new AlertDialog.Builder(GameActivity.this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle("在白天殺死 :" + seat + " 號玩家?")
+                .setPositiveButton("投票", (dialog, which) -> {
+                    gameViewModel.voteOn(seat);
+                }).setNegativeButton("QQ", (dialog, which) -> {
+                }).create().show();
     }
 }

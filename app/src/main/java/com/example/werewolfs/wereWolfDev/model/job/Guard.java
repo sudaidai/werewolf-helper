@@ -2,8 +2,9 @@ package com.example.werewolfs.wereWolfDev.model.job;
 
 import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
+import com.example.werewolfs.wereWolfDev.model.Role;
 
-public class Guard extends Role{
+public class Guard extends Role {
 
     private int isProtected = 0;
 

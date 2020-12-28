@@ -1,6 +1,5 @@
-package com.example.werewolfs.wereWolfDev.model.job;
+package com.example.werewolfs.wereWolfDev.model;
 
-import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 
 public class Role {

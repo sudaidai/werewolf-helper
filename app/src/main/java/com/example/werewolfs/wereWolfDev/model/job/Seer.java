@@ -3,8 +3,9 @@ package com.example.werewolfs.wereWolfDev.model.job;
 import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.constant.Static;
+import com.example.werewolfs.wereWolfDev.model.Role;
 
-public class Seer extends Role{
+public class Seer extends Role {
 
     public Seer(){
         stage = Action.預言家;

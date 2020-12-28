@@ -2,8 +2,9 @@ package com.example.werewolfs.wereWolfDev.model.job;
 
 import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
+import com.example.werewolfs.wereWolfDev.model.Role;
 
-public class Witch extends Role{
+public class Witch extends Role {
 
     private boolean hasHerbal;
     private boolean hasPoison;
@@ -21,13 +22,17 @@ public class Witch extends Role{
     }
 
     public void useHerbal(int seat){
-        isSaved = seat;
-        hasHerbal = false;
+        if(hasHerbal){
+            isSaved = seat;
+            hasHerbal = false;
+        }
     }
 
     public void usePoison(int seat){
-        isPoisoned = seat;
-        hasPoison = false;
+        if(hasPoison){
+            isPoisoned = seat;
+            hasPoison = false;
+        }
     }
 
     public boolean hasHerbal() {
@@ -38,8 +43,16 @@ public class Witch extends Role{
         return hasPoison;
     }
 
+    public void setIsSave(int isSaved) {
+        this.isSaved = isSaved;
+    }
+
     public int getIsSave() {
         return isSaved;
+    }
+
+    public void setIsPoisoned(int isPoisoned) {
+        this.isPoisoned = isPoisoned;
     }
 
     public int getIsPoisoned() {

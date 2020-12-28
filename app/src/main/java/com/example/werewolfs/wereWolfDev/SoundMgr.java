@@ -2,9 +2,13 @@ package com.example.werewolfs.wereWolfDev;
 /** 用途 : 語音*/
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.PowerManager;
+import android.util.Log;
+
+import com.example.werewolfs.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +16,7 @@ import java.util.List;
 
 public class SoundMgr {
 
+    private static final String TAG = "Sound";
     private final Context mContext;
     public MediaPlayer mediaPlayer;
     private SoundPool sp;
@@ -27,6 +32,7 @@ public class SoundMgr {
     }
 
     public void playSound(int _id){
+        Log.d(TAG, "play ->" + _id);
         mediaPlayer = MediaPlayer.create(mContext, _id);
         cd.add(mediaPlayer);
         order += 1;
@@ -56,10 +62,10 @@ public class SoundMgr {
         }
     }
 
-//    public void preLoadSoundResource(Context context){
-//        sp = new SoundPool(50, AudioManager.STREAM_SYSTEM, 5);
-//        soundID.put(1 , sp.load(context, R.raw.bear_close, 1));
-//        soundID.put(2 , sp.load(context, R.raw.bear_open, 1));
-//        soundID.put(3 , sp.load(context, R.raw.bomb_skill, 1));
-//    }
+    public void preLoadSoundResource(Context context){
+        sp = new SoundPool(50, AudioManager.STREAM_MUSIC, 5);
+        soundID.put(1 , sp.load(context, R.raw.bear_close, 1));
+        soundID.put(2 , sp.load(context, R.raw.bear_open, 1));
+        soundID.put(3 , sp.load(context, R.raw.bomb_skill, 1));
+    }
 }

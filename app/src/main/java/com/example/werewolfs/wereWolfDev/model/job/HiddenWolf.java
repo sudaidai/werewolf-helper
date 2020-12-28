@@ -4,11 +4,10 @@ import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.model.Role;
 
-public class Hunter extends Role {
-
-    public Hunter(){
-        stage = Action.獵人;
-        openSound = R.raw.hunter4;
-        closeSound = R.raw.hunter2;
+public class HiddenWolf extends Role {
+    public HiddenWolf(){
+        stage = Action.隱狼;
+        openSound = R.raw.hidden_open;
+        closeSound = R.raw.hidden_close;
     }
 }

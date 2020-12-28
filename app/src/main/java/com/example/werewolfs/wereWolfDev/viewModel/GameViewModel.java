@@ -1,22 +1,14 @@
 package com.example.werewolfs.wereWolfDev.viewModel;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
@@ -26,18 +18,28 @@ import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.SoundMgr;
 import com.example.werewolfs.wereWolfDev.activity.GameActivityNotify;
 import com.example.werewolfs.wereWolfDev.constant.Action;
+import com.example.werewolfs.wereWolfDev.constant.EndType;
 import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
+import com.example.werewolfs.wereWolfDev.model.job.Bear;
 import com.example.werewolfs.wereWolfDev.model.job.Guard;
+import com.example.werewolfs.wereWolfDev.model.job.HiddenWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Hunter;
-import com.example.werewolfs.wereWolfDev.model.job.Role;
+import com.example.werewolfs.wereWolfDev.model.job.Idiot;
+import com.example.werewolfs.wereWolfDev.model.job.Knight;
+import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.model.job.Witch;
 import com.example.werewolfs.wereWolfDev.model.job.Wolf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static java.lang.Math.random;
 
 public class GameViewModel extends AndroidViewModel implements GameNotify {
 
@@ -56,11 +58,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 身分與職業
      */
-    private Wolf wolves;
-    private Witch witch;
-    private Seer seer;
-    private Guard guard;
-    private Hunter hunter;
+    private Wolf wolves = new Wolf();
+    private Witch witch = new Witch();
+    private Seer seer = new Seer();
+    private Guard guard = new Guard();
+    private Hunter hunter = new Hunter();
+    private Bear bear = new Bear();
+    private Knight knight = new Knight();
+    private Idiot idiot = new Idiot();
+    private HiddenWolf hiddenWolf = new HiddenWolf();
 
     /**
      * observable object
@@ -108,11 +114,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         announcement.set("準備開始");
         initSelect();
         seatsSelected = new ArrayList<>();
-        wolves = new Wolf();
-        witch = new Witch();
-        seer = new Seer();
-        guard = new Guard();
-        hunter = new Hunter();
+
         Static.dataModel.setGameNotify(this);
     }
 
@@ -196,7 +198,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private void checkedEvent(int seat, Action stage) {
         ToggleButton tgBtn = tgBtnGroup[seat];
         DataModel dataModel = Static.dataModel;
-        HashMap<Action, Integer> seatRoleMap = dataModel.getSeatRoleMap();
+        HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
         switch (stage) {
             case 狼人:
                 setColorAndTextOn(tgBtn, "狼人", Color.BLUE);
@@ -250,6 +252,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     setColorAndTextOn(tgBtn, "保護", Color.GRAY);
                 }
                 break;
+            case 白天:
+                choosePosition(seat);
+                setColorAndTextOn(tgBtn, "確認", Color.GREEN);
+                break;
+            default:
+                choosePosition(seat);
+                setColorAndTextOn(tgBtn, stage + "", Color.BLUE);
         }
     }
 
@@ -262,7 +271,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         }
 
         DataModel dataModel = Static.dataModel;
-        HashMap<Action, Integer> seatRoleMap = dataModel.getSeatRoleMap();
+        HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
         switch (stage) {
             case 狼人:
                 seatsSelected.remove(new Integer(seat));
@@ -285,6 +294,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                         witch.usePoison(seat);
                     }
                     closeYourEyes(witch);
+                    //女巫未點選拯救時，會需要更改被狼人刀的座位為原本的顏色
+                    tgBtnGroup[wolves.getKnifeOn()].setBackgroundColor(Color.BLACK);
                 }
                 break;
             case 預言家:
@@ -293,7 +304,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 } else {
                     boolean isWolf = seer.isWolf(seat);
                     gameActivityNotify.notifySeerAsk(isWolf, seat, seer);
-//                        setPositionFalse(seat); ??
                 }
                 break;
             case 守衛:
@@ -312,6 +322,23 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     closeYourEyes(guard);
                 }
                 break;
+            case 獵人:
+                setSeat(hunter, seat);
+                closeYourEyes(hunter);
+                break;
+            case 熊:
+                setSeat(bear, seat);
+                closeYourEyes(bear);
+                break;
+            case 騎士:
+                setSeat(knight, seat);
+                closeYourEyes(knight);
+                break;
+            case 白癡:
+                setSeat(idiot, seat);
+                closeYourEyes(idiot);
+            case 白天:
+                gameActivityNotify.notifyVoteCheck(seat);
         }
         initSelect();
     }
@@ -326,7 +353,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         wolves.addAll(seatsSelected);
 
         for (int seat : wolves) {
-            dataModel.getSeatRoleMap().put(Action.狼人, seat);
+            dataModel.getGodRoleMap().put(Action.狼人, seat);
             setPositionFalse(seat);
         }
         checkVisible.set(false);
@@ -482,7 +509,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * @param seat
      */
     public void repeatSelectionCheck(int seat) {
-        if (Static.dataModel.getSeatRoleMap().values().contains(seat)) {
+        if (Static.dataModel.getGodRoleMap().values().contains(seat)) {
             gameActivityNotify.notifyRepeatSelect();
         } else {
             return;
@@ -497,6 +524,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         for (int seat : Static.dataModel.getDieList()) {
             tgBtnGroup[seat].setClickable(false);
             tgBtnGroup[seat].setBackgroundColor(Color.RED);
+            tgBtnGroup[seat].setText("DIE");
         }
     }
 
@@ -526,8 +554,17 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         Action stage = role.stage;
         announcement.set(stage + "請使用技能");
         music.playSound(role.skillSound);
-        Static.dataModel.getSeatRoleMap().put(stage, seat);
+        Static.dataModel.getGodRoleMap().put(stage, seat);
         role.setSeat(seat);
+        Log.d(TAG, stage + "為 : " + seat + "號玩家");
+    }
+
+    private void setSeat(Role role, int seat){
+        repeatSelectionCheck(seat);
+        Action stage = role.stage;
+        Static.dataModel.getGodRoleMap().put(stage, seat);
+        role.setSeat(seat);
+        initSelect();
         Log.d(TAG, stage + "為 : " + seat + "號玩家");
     }
 
@@ -536,6 +573,50 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         music.playSound(role.closeSound);
         Static.dataModel.setNextStage();
     }
+
+    /**
+     * 第一天獲取發言順序(警長競選)
+     * @return
+     */
+    private int getSpeakOrder(){
+        SimpleDateFormat sdf = new SimpleDateFormat("mm");
+        Date now = new Date(System.currentTimeMillis());
+        int min = Integer.parseInt(sdf.format(now));
+        int speakOrder = (min % (Static.dataModel.getPeoCnt())) + 1;
+        if(random() < 0.5){
+            speakOrder = -speakOrder;
+        }
+        return speakOrder;
+    }
+
+    /**
+     * 根據昨晚死亡玩家選定對話文字
+     * @param dieList
+     * @return
+     */
+    public String checkDieList(List<Integer> dieList){
+        String text="";
+        if(dieList.size() > 0){
+            text = "昨晚死亡玩家為 : " + dieList;
+        }else{
+            int speakOrder = getSpeakOrder();
+            String str;
+            if(speakOrder > 0){
+                str = "順序";
+            }else{
+                str = "逆序";
+                speakOrder = -speakOrder;
+            }
+            text = "昨晚為平安夜\n根據現在時間由" + speakOrder + "號玩家\"" + str + "\"開始發言";
+        }
+        return text;
+    }
+
+    public void voteOn(int seat){
+        Static.dataModel.playerDead(seat);
+    }
+
+
 
 
     @Override
@@ -589,7 +670,91 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             case 獵人:
                 openYourEyes(hunter);
                 break;
+            case 熊:
+                openYourEyes(bear);
+                break;
+            case 騎士:
+                openYourEyes(knight);
+            case 白癡:
+                openYourEyes(idiot);
+            case 隱狼:
+                openYourEyes(hiddenWolf);
+            case 白天:
+                dataModel.nightEnd();
+                break;
 
         }
+    }
+
+    String message = "";
+    @Override
+    public void notifyNightEnd(){
+        List<Integer> dieList = Static.dataModel.getDieList();
+        List<Integer> tempDieList = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
+        int turn = Static.dataModel.getTurn();
+
+        /**
+         * 目前玩家會死亡的狀況
+         * 1.被狼人刀 -> 女巫不救
+         * 2.被狼人刀 -> 被女巫救 -> 被守衛守
+         * 3.被女巫毒
+         */
+        int knifeOn = wolves.getKnifeOn();
+        if((knifeOn!= witch.getIsSave())
+         || witch.getIsSave() == guard.getIsProtected()){
+            Static.dataModel.playerDead(knifeOn);
+            tempDieList.add(knifeOn);
+            witch.setIsSave(0);
+        }
+
+        int isPoisoned = witch.getIsPoisoned();
+        if(isPoisoned != 0 && !dieList.contains(isPoisoned)){
+            Static.dataModel.playerDead(isPoisoned);
+            tempDieList.add(isPoisoned);
+            witch.setIsPoisoned(0);
+        }
+        Collections.sort(tempDieList);
+        Log.d(TAG, "dieList -> " + tempDieList);
+
+        if(turn == 1){
+            int speakOrder = getSpeakOrder();
+            String str;
+            if(speakOrder > 0){
+                str = "順序";
+            }else{
+                str = "逆序";
+                speakOrder = -speakOrder;
+            }
+            message = "競選警長階段\n根據現在時間由" + speakOrder + "號玩家\"" + str + "\"開始發言";
+        }else{
+            message = checkDieList(tempDieList);
+        }
+
+        new CountDownTimer(5000, 1000){
+            @Override
+            public void onTick(long millisUntilFinished) {
+                announcement.set(String.valueOf(millisUntilFinished/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                announcement.set("點此進入下一晚->");
+                ctrlBtnField.background.set(false);
+                ctrlBtnField.text.set("第" + turn + "天");
+                ctrlBtnField.textColor.set(Color.WHITE);
+                setAllTgBtnStyle();
+                if(turn == 1){
+                    gameActivityNotify.notifyFirstDaybreak(message, tempDieList);
+                }else {
+                    gameActivityNotify.notifyDaybreak(message);
+                }
+            }
+        }.start();
+        Static.dataModel.nextTurn();
+    }
+
+    @Override
+    public void notifyGameEnd(EndType endType) {
+
     }
 }

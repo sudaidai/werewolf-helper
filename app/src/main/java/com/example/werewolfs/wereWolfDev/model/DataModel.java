@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.werewolfs.R;
 import com.example.werewolfs.wereWolfDev.constant.Action;
+import com.example.werewolfs.wereWolfDev.constant.EndType;
 import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.viewModel.GameNotify;
 
@@ -35,8 +36,10 @@ public class DataModel {
     private int turn; //輪次
     private List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
     private List<Integer> dieList = new ArrayList<>(); //死亡名單
-    private HashMap<Action, Integer> seatRoleMap = new HashMap<>(); //好人玩家對應的職業
+    private HashMap<Action, Integer> godRoleMap = new HashMap<>(); //好人玩家對應的職業
+    private HashMap<Action, Integer> wolfRoleMap = new HashMap<>(); //狼人玩家對應的職業
     private List<Integer> wolfGroup = new ArrayList<>(); //狼人名單
+    private List<Integer> villagers = new ArrayList<>(); //村民名單
 
     public void setGameNotify(GameNotify gameNotify) {
         this.gameNotify = gameNotify;
@@ -127,6 +130,10 @@ public class DataModel {
 
     public void nightEnd(){
         isDay = true;
+        if(turn == 1){
+            addVillagers();
+        }
+        gameNotify.notifyNightEnd();
     }
 
     public Action getStage() {
@@ -156,6 +163,14 @@ public class DataModel {
         return Action.白天;
     }
 
+    private void addVillagers(){
+        for(int i=1 ; i<=peoCnt ; i++){
+            if(!(godRoleMap.containsKey(i) || wolfGroup.contains(i) || wolfRoleMap.containsKey(i))){
+                villagers.add(i);
+            }
+        }
+    }
+
 
 
     public int getTurn() {
@@ -166,12 +181,41 @@ public class DataModel {
         turn += 1;
     }
 
-    public HashMap<Action, Integer> getSeatRoleMap() {
-        return seatRoleMap;
+    public HashMap<Action, Integer> getGodRoleMap() {
+        return godRoleMap;
     }
 
     public List<Integer> getDieList() {
         return dieList;
+    }
+
+    public void playerDead(int seat){
+        dieList.add(seat);
+        checkGameEnd();
+    }
+
+    private void checkGameEnd() {
+        if(gameEndRule){
+            //屠城 除了狼 沒人活著
+            int wolfDeadCnt = 0;
+            for(int seat : dieList){
+                //算出死亡的狼的數量
+                if(wolfGroup.contains(seat) || wolfRoleMap.containsValue(seat)){
+                    wolfDeadCnt += 1;
+                }
+            }
+
+            if(wolfDeadCnt == wolfGroup.size() + wolfRoleMap.size()){
+                gameNotify.notifyGameEnd(EndType.好人勝利);
+            }else if(godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()){
+                gameNotify.notifyGameEnd(EndType.屠城);
+            }
+        }else{
+            //屠邊
+            if(dieList.containsAll(villagers) || dieList.containsAll(godRoleMap.values())){
+                gameNotify.notifyGameEnd(EndType.屠邊);
+            }
+        }
     }
 
     public List<Integer> getWolfGroup(){
