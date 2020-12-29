@@ -49,6 +49,12 @@ public class DataModel {
         isDay = true;
         stage = Action.準備開始;
         turn = 1;
+        stageOrder.clear();
+        dieList.clear();
+        godRoleMap.clear();
+        wolfRoleMap.clear();
+        wolfGroup.clear();
+        villagers.clear();
 
         stageOrder.add(Action.準備開始);
         stageOrder.add(Action.狼人);
@@ -126,6 +132,7 @@ public class DataModel {
 
     public void dayEnd(){
         isDay = false;
+        gameNotify.notifyDayEnd();
     }
 
     public void nightEnd(){
@@ -149,8 +156,9 @@ public class DataModel {
     public Action getNextStage() {
         for (int i = 0; i < stageOrder.size(); i++) {
             if (stageOrder.get(i) == stage) {
-                if (i + 1 != stageOrder.size()) {
-                    if(turn!=1 && stageOrder.get(i+1).isPassive()){
+                if (i + 1 < stageOrder.size()) {
+                    if(turn != 1 && stageOrder.get(i+1).isPassive()){
+                        stage = stageOrder.get(i+1);
                         continue;
                     }
                     return stageOrder.get(i + 1);
@@ -195,25 +203,28 @@ public class DataModel {
     }
 
     private void checkGameEnd() {
+        int wolfDeadCnt = 0;
+        for(int seat : dieList){
+            //算出死亡的狼的數量
+            if(wolfGroup.contains(seat) || wolfRoleMap.containsValue(seat)){
+                wolfDeadCnt += 1;
+            }
+        }
+        if(wolfDeadCnt == wolfGroup.size() + wolfRoleMap.size()) {
+            gameNotify.notifyGameEnd(EndType.好人勝利);
+        }
+
         if(gameEndRule){
             //屠城 除了狼 沒人活著
-            int wolfDeadCnt = 0;
-            for(int seat : dieList){
-                //算出死亡的狼的數量
-                if(wolfGroup.contains(seat) || wolfRoleMap.containsValue(seat)){
-                    wolfDeadCnt += 1;
-                }
-            }
-
-            if(wolfDeadCnt == wolfGroup.size() + wolfRoleMap.size()){
-                gameNotify.notifyGameEnd(EndType.好人勝利);
-            }else if(godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()){
+            if(godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()){
                 gameNotify.notifyGameEnd(EndType.屠城);
             }
         }else{
             //屠邊
-            if(dieList.containsAll(villagers) || dieList.containsAll(godRoleMap.values())){
-                gameNotify.notifyGameEnd(EndType.屠邊);
+            if(dieList.containsAll(villagers)){
+                gameNotify.notifyGameEnd(EndType.屠民);
+            }else if(dieList.containsAll(godRoleMap.values())){
+                gameNotify.notifyGameEnd(EndType.屠神);
             }
         }
     }

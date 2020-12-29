@@ -103,7 +103,10 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setIcon(R.drawable.ic_launcher_background)
                 .setTitle("身分重複")
                 .setMessage("" + "遊戲自動重新開始，別亂按好嗎 (☞ﾟ∀ﾟ)ﾟ∀ﾟ)☞")
-                .setPositiveButton("ok", (dialog, which) -> finish())
+                .setPositiveButton("ok", (dialog, which) -> {
+                    gameViewModel.initGameVariable();
+                    finish();
+                })
                 .show();
     }
 
@@ -128,7 +131,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .create();
         seerDialog.show();
 
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {}
             public void onFinish() {
                 seerDialog.cancel();
@@ -158,6 +161,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                             .setTitle(message2)
                             .setPositiveButton("ok", null)
                             .show();
+                    gameViewModel.initSeatState();
                 })
                 .show();
     }
@@ -171,5 +175,17 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                     gameViewModel.voteOn(seat);
                 }).setNegativeButton("QQ", (dialog, which) -> {
                 }).create().show();
+    }
+
+    @Override
+    public void notifyGameEnd(String endTitle, String endMessage) {
+        new AlertDialog.Builder(GameActivity.this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(endTitle)
+                .setMessage(endMessage)
+                .setPositiveButton("ok", (dialog, which) -> {
+                    gameViewModel.initGameVariable(); //TODO 初始化
+                    finish();
+                }).show();
     }
 }

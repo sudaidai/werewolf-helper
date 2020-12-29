@@ -23,9 +23,9 @@ public enum Action {
         this.role = role;
     }
 
-    /** 確認身分後晚上不用睜眼的階段*/
+    /** 第一輪過後要跳過的階段*/
     public boolean isPassive(){
-        if(order==3 || order==6 || order==9 ||
+        if(order==0 || order==1 || order==3 || order==6 || order==9 ||
                 (order>=12 && order<=16) || order==21 || order==22){
             return true;
         }

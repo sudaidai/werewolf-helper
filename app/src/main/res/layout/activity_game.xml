@@ -56,7 +56,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="@{() -> viewModel.onCenterClick()}"
-                android:clickable="true"
+                android:clickable="@{CBField.clickable}"
                 android:background="@{CBField.background ? @color/white : @color/black}"
                 android:text="@{CBField.text}"
                 android:textColor="@{CBField.textColor}"

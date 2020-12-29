@@ -91,6 +91,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private final Context mContext; //to avoid memory leaks, this must be an Application context
     private SoundMgr music;
     private ToggleButton[] tgBtnGroup;
+    String message = "";
 
     /**
      * observable variable
@@ -145,25 +146,16 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         DataModel dataModel = Static.dataModel;
         if (dataModel.isDay()) {
             music.playSound(R.raw.howling);
-
             dataModel.dayEnd();
-            ctrlBtnField.textColor.set(Color.BLACK);
-            ctrlBtnField.background.set(true);
-            ctrlBtnField.clickable.set(false);
-
-            switch (dataModel.getStage()) {
-                case 準備開始:
-                    setAllSeatState(true);
-                    setAllTgBtnStyle();
-                    dataModel.setNextStage();
-            }
         } else {
             switch (dataModel.getStage()) {
                 case 守衛:
+                    if(guard.getSeat() == 0) return; //避免守衛未確認身分按空守
                     guard.protect(0);
                     if (selected != 0) {
                         setPositionFalse(selected);
                     }
+                    music.playSound(guard.closeSound);
                     break;
                 case 禁言長老:
                     break;
@@ -353,7 +345,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         wolves.addAll(seatsSelected);
 
         for (int seat : wolves) {
-            dataModel.getGodRoleMap().put(Action.狼人, seat);
             setPositionFalse(seat);
         }
         checkVisible.set(false);
@@ -476,6 +467,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
 
             public void onFinish() {
+                announcement.set("玩家死亡 ->");
                 ctrlBtnField.text.set("點我跳過");
                 ctrlBtnField.clickable.set(true);
             }
@@ -485,7 +477,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 進入下一階段，開眼與閉眼間格時間，請玩家睜眼
      */
-    public void stageDelay(Action stage) {
+    public void stageDelay(Action stage, Role role) {
         new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {
                 announcement.set(String.valueOf(millisUntilFinished / 1000));
@@ -493,6 +485,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
             public void onFinish() {
                 announcement.set(stage + "請睜眼");
+                music.playSound(role.openSound);
 //                switch (stage){
 //                    case 女巫:
 //                        if (witch.hasHerbal()) {
@@ -535,7 +528,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             skipStage();
             setAllSeatState(false);
         } else {
-            initSeatState(); // ? TODO
+            initSeatState(); // ? 必要? TODO
             String btnText = "";
             switch (role.stage) {
                 case 守衛:
@@ -612,8 +605,27 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         return text;
     }
 
+    /** 白天投票*/
     public void voteOn(int seat){
         Static.dataModel.playerDead(seat);
+        initSeatState();
+    }
+
+    /** 計時後天亮*/
+    private void dayBreak(List<Integer> dieList_today, int turn){
+        music.playSound(R.raw.daybreak);
+        announcement.set("點此進入下一晚->");
+        ctrlBtnField.background.set(false);
+        ctrlBtnField.text.set("第" + turn + "天");
+        ctrlBtnField.textColor.set(Color.WHITE);
+        ctrlBtnField.clickable.set(true);
+        setAllTgBtnStyle();
+        if(turn == 1){
+            gameActivityNotify.notifyFirstDaybreak(message, dieList_today);
+        }else {
+            gameActivityNotify.notifyDaybreak(message);
+            initSeatState();
+        }
     }
 
 
@@ -626,6 +638,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             case 狼人:
                 announcement.set("狼人請睜眼");
                 music.playSound(R.raw.wolf_open);
+                if(dataModel.getTurn() != 1){
+                    //第一輪之後狼人不用確認身分 播放聲音後跳到殺人
+                    dataModel.setNextStage();
+                }
                 break;
             case 殺人:
                 announcement.set("雙擊殺人");
@@ -638,10 +654,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                      */
                     int seat = witch.getSeat();
                     if (dataModel.getDieList().contains(seat)) {
+                        music.playSound(witch.openSound);
                         skipStage();
                         setAllSeatState(false);
                     } else {
-                        stageDelay(stage);
+                        stageDelay(stage, witch);
                         if (!witch.hasPoison()) {
                             setAllSeatState(false);
                             tgBtnGroup[seat].setClickable(true);
@@ -653,20 +670,21 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                         }
                     }
                 } else {
-                    stageDelay(stage);
-                }
-                music.playSound(R.raw.witch_open);
-                break;
+                    stageDelay(stage, witch);
+                }break;
             case 預言家:
                 openYourEyes(seer);
                 break;
             case 守衛:
                 openYourEyes(guard);
+                if(dataModel.getTurn() != 1){
+                    ctrlBtnField.text.set("空守");
+                    ctrlBtnField.clickable.set(true);
+                }
                 //守衛不能同守 鎖定座位
                 if (guard.getIsProtected() != 0) {
                     tgBtnGroup[guard.getIsProtected()].setClickable(false);
-                }
-                break;
+                }break;
             case 獵人:
                 openYourEyes(hunter);
                 break;
@@ -675,10 +693,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 騎士:
                 openYourEyes(knight);
+                break;
             case 白癡:
                 openYourEyes(idiot);
+                break;
             case 隱狼:
                 openYourEyes(hiddenWolf);
+                break;
             case 白天:
                 dataModel.nightEnd();
                 break;
@@ -686,22 +707,35 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         }
     }
 
-    String message = "";
+    @Override
+    public void notifyDayEnd() {
+        DataModel dataModel = Static.dataModel;
+        ctrlBtnField.textColor.set(Color.BLACK);
+        ctrlBtnField.background.set(true);
+        ctrlBtnField.clickable.set(false);
+        setAllSeatState(true);
+        setAllTgBtnStyle();
+        dataModel.setNextStage();
+        initSeatState();
+    }
+
     @Override
     public void notifyNightEnd(){
+        message = "";
         List<Integer> dieList = Static.dataModel.getDieList();
         List<Integer> tempDieList = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
         int turn = Static.dataModel.getTurn();
 
         /**
          * 目前玩家會死亡的狀況
-         * 1.被狼人刀 -> 女巫不救
+         * 1.被狼人刀 -> 女巫不救 且 守衛非守
          * 2.被狼人刀 -> 被女巫救 -> 被守衛守
          * 3.被女巫毒
          */
         int knifeOn = wolves.getKnifeOn();
-        if((knifeOn!= witch.getIsSave())
-         || witch.getIsSave() == guard.getIsProtected()){
+        if((knifeOn != witch.getIsSave())
+         || witch.getIsSave() == guard.getIsProtected()
+         && knifeOn != guard.getIsProtected()){
             Static.dataModel.playerDead(knifeOn);
             tempDieList.add(knifeOn);
             witch.setIsSave(0);
@@ -738,16 +772,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
             @Override
             public void onFinish() {
-                announcement.set("點此進入下一晚->");
-                ctrlBtnField.background.set(false);
-                ctrlBtnField.text.set("第" + turn + "天");
-                ctrlBtnField.textColor.set(Color.WHITE);
-                setAllTgBtnStyle();
-                if(turn == 1){
-                    gameActivityNotify.notifyFirstDaybreak(message, tempDieList);
-                }else {
-                    gameActivityNotify.notifyDaybreak(message);
-                }
+                dayBreak(tempDieList, turn);
             }
         }.start();
         Static.dataModel.nextTurn();
@@ -755,6 +780,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     @Override
     public void notifyGameEnd(EndType endType) {
-
+        Log.d(TAG, "遊戲結束");
+        String endText = "遊戲結束 " + endType;
+        String endMessage = "";
+        HashMap<Action, Integer> godRoleMap = Static.dataModel.getGodRoleMap();
+        for(Action act : godRoleMap.keySet()){
+            endMessage += "\n" + godRoleMap.get(act) + " . " + act;
+        }
+        gameActivityNotify.notifyGameEnd(endText, endMessage);
     }
 }

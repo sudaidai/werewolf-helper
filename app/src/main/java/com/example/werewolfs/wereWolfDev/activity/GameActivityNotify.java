@@ -11,4 +11,5 @@ public interface GameActivityNotify {
     void notifyDaybreak(String message);
     void notifyFirstDaybreak(String message, List<Integer> dieList);
     void notifyVoteCheck(int seat);
+    void notifyGameEnd(String endTitle, String endMessage);
 }
