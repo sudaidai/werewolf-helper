@@ -13,17 +13,17 @@ import com.example.werewolfs.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
-public class SoundMgr {
+public class SoundMgr implements MediaPlayer.OnCompletionListener{
 
     private static final String TAG = "Sound";
     private final Context mContext;
-    public MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer; //播放中
+    public MediaPlayer cd;
     private SoundPool sp;
     private HashMap<Integer, Integer> soundID = new HashMap<Integer, Integer>();
-    private int order = 0;
-
-    private List<MediaPlayer> cd = new ArrayList<>();
+    private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(5);
 
     public SoundMgr(Context context){
         mContext = context;
@@ -32,33 +32,22 @@ public class SoundMgr {
     }
 
     public void playSound(int _id){
-        Log.d(TAG, "play ->" + _id);
-        mediaPlayer = MediaPlayer.create(mContext, _id);
-        cd.add(mediaPlayer);
-        order += 1;
-        if(order != 1){
-            if(cd.get(order-2).isPlaying()){
-                cd.get(order-2).setOnCompletionListener(mp -> {
-                    releaseSound(order - 2);
-                    cd.get(order-1).start();
-                });
-            }else{
-                cd.get(order-1).start();
-            }
+        Log.d(TAG, "play -> " + _id);
+
+        if(mediaPlayer.isPlaying()){
+            cd = MediaPlayer.create(mContext, _id);
+            cd.setOnCompletionListener(this);
+            queue.offer(cd);
         }else{
-            cd.get(order-1).start();
+            mediaPlayer = MediaPlayer.create(mContext, _id);
+            mediaPlayer.setOnCompletionListener(this);
+            mediaPlayer.start();
         }
     }
 
-    public void cancelSound(){
-        if(cd.get(order-1) != null){
-            cd.get(order-1).pause();
-        }
-    }
-
-    public void releaseSound(int order){
-        if(cd.get(order) != null){
-            cd.get(order).release();
+    public void cancelSound() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
         }
     }
 
@@ -67,5 +56,14 @@ public class SoundMgr {
         soundID.put(1 , sp.load(context, R.raw.bear_close, 1));
         soundID.put(2 , sp.load(context, R.raw.bear_open, 1));
         soundID.put(3 , sp.load(context, R.raw.bomb_skill, 1));
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        //只要完成播放 檢查queue 有聲音在排隊的話 拿出來播放
+        if(queue.peek() != null){
+            mediaPlayer = queue.poll(); //mediaPlayer指向新的參照 舊的會自動被回收(?)
+            mediaPlayer.start();
+        }
     }
 }
