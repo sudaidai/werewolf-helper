@@ -329,6 +329,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             case 白癡:
                 setSeat(idiot, seat);
                 closeYourEyes(idiot);
+            case 隱狼:
+                setSeat(hiddenWolf, seat);
+                closeYourEyes(hiddenWolf);
             case 白天:
                 gameActivityNotify.notifyVoteCheck(seat);
         }
@@ -486,12 +489,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             public void onFinish() {
                 announcement.set(stage + "請睜眼");
                 music.playSound(role.openSound);
-//                switch (stage){
-//                    case 女巫:
-//                        if (witch.hasHerbal()) {
-//                            tgBtnGroup[wolves.getKnifeOn()].setBackgroundColor(Color.RED);
-//                        }break;
-//                }
             }
         }.start();
     }
