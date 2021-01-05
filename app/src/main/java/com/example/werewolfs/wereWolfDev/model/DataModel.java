@@ -197,6 +197,10 @@ public class DataModel {
         return dieList;
     }
 
+    /**
+     * 獲知玩家死亡，加入死亡名單
+     * @param seat
+     */
     public void playerDead(int seat){
         dieList.add(seat);
         checkGameEnd();
@@ -231,5 +235,9 @@ public class DataModel {
 
     public List<Integer> getWolfGroup(){
         return wolfGroup;
+    }
+
+    public HashMap<Action, Integer> getWolfRoleMap(){
+        return wolfRoleMap;
     }
 }

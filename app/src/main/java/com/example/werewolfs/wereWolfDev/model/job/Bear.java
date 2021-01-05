@@ -10,5 +10,6 @@ public class Bear extends Role {
         stage = Action.熊;
         openSound = R.raw.bear_open;
         closeSound = R.raw.bear_close;
+        skillSound = R.raw.bear_roar;
     }
 }
