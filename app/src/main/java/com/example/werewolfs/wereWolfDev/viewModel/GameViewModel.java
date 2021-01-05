@@ -150,6 +150,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             dataModel.dayEnd();
         } else {
             switch (dataModel.getStage()) {
+                case 女巫:
+                    closeYourEyes(witch);
+                    break;
+                case 預言家:
+                    closeYourEyes(seer);
+                    break;
                 case 守衛:
                     if(guard.getSeat() == 0) return; //避免守衛未確認身分按空守
                     guard.protect(0);
@@ -813,12 +819,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             boolean roar = bearRoar();
             if(roar){
                 music.playSound(bear.skillSound);
-                message += "\n熊叫了！(╬ﾟдﾟ)";
+                message += ", 熊叫了！(╬ﾟдﾟ)";
             }else{
-                message += "\n熊沒有叫( ˘•ω•˘ )！";
+                message += ", 熊沒有叫( ˘•ω•˘ )！";
             }
-            if(dieList_today.contains(bearSeat)){
-                message += "\n熊不再吼叫(´;ω;`)";
+            if(dieList.contains(bearSeat)){
+                message += ", 熊不再吼叫(´;ω;`)";
                 bear.killed();
             }
         }
