@@ -203,6 +203,9 @@ public class DataModel {
      */
     public void playerDead(int seat){
         dieList.add(seat);
+        if(dieList.containsAll(wolfGroup)){
+            gameNotify.notifyShowHiddenWolf();
+        }
         checkGameEnd();
     }
 

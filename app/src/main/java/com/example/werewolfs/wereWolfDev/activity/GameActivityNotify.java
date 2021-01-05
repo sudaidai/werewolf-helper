@@ -12,4 +12,10 @@ public interface GameActivityNotify {
     void notifyFirstDaybreak(String message, List<Integer> dieList);
     void notifyVoteCheck(int seat);
     void notifyGameEnd(String endTitle, String endMessage);
+
+    /**
+     * 告訴隱狼誰是他的隊友
+     * @param wolfGroup
+     */
+    void notifyWolfFriend(List<Integer> wolfGroup);
 }

@@ -188,4 +188,13 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                     finish();
                 }).show();
     }
+
+    @Override
+    public void notifyWolfFriend(List<Integer> wolfGroup) {
+        new AlertDialog.Builder(this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(wolfGroup + " 是你的狼隊友")
+                .setPositiveButton("ok", null)
+                .show();
+    }
 }

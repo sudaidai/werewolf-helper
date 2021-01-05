@@ -652,12 +652,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             if(left == 0) { left = peo_cnt; }
         }while(dieList.contains(left));
 
+        if(wolfGroup.contains(left)){
+            return true;
+        }
         do{
             right = (right + 1) % peo_cnt;
             if(right == 0) { right = 1; }
         }while(dieList.contains(right));
 
-        if(wolfGroup.contains(left) || wolfGroup.contains(right)){
+        if(wolfGroup.contains(right)){
             return true;
         }else{
             return false;
@@ -735,6 +738,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 隱狼:
                 openYourEyes(hiddenWolf);
+                gameActivityNotify.notifyWolfFriend(Static.dataModel.getWolfGroup());
                 break;
             case 白天:
                 dataModel.nightEnd();
@@ -843,5 +847,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             endMessage += "\n" + godRoleMap.get(act) + " . " + act;
         }
         gameActivityNotify.notifyGameEnd(endText, endMessage);
+    }
+
+    @Override
+    public void notifyShowHiddenWolf() {
+        int seat = hiddenWolf.getSeat();
+        if(seat != 0){
+            Static.dataModel.getWolfGroup().add(seat);
+        }
     }
 }
