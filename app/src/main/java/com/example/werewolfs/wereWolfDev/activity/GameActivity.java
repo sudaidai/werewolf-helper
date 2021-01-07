@@ -22,6 +22,7 @@ import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
 import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
+import com.example.werewolfs.wereWolfDev.model.job.TombKeeper;
 import com.example.werewolfs.wereWolfDev.viewModel.GameViewModel;
 
 import java.util.List;
@@ -224,6 +225,25 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
             public void onFinish() {
                 seeThroughDialogue.cancel();
                 gameViewModel.closeYourEyes(role);
+            }
+        }.start();
+    }
+
+    @Override
+    public void notifyInGrave(boolean identity, TombKeeper tombKeeper) {
+        String isWolf = identity ? "好人" : "壞人";
+        AlertDialog tombDialogue = new AlertDialog.Builder(this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle("前一晚你埋了一個... " + isWolf)
+                .setPositiveButton("ok", null)
+                .show();
+
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {}
+            public void onFinish() {
+                tombDialogue.cancel();
+                gameViewModel.closeYourEyes(tombKeeper);
+                gameViewModel.setAllSeatState(true);
             }
         }.start();
     }

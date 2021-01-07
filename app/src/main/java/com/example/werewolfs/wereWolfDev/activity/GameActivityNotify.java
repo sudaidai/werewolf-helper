@@ -3,6 +3,7 @@ package com.example.werewolfs.wereWolfDev.activity;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
+import com.example.werewolfs.wereWolfDev.model.job.TombKeeper;
 
 import java.util.List;
 
@@ -33,4 +34,10 @@ public interface GameActivityNotify {
      * @param seat
      */
     void notifySeeThrough(Action identity, int seat, Role role);
+
+    /**
+     * 守墓人看被投票身分
+     * @param identity
+     */
+    void notifyInGrave(boolean identity, TombKeeper tombKeeper);
 }

@@ -33,6 +33,7 @@ import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.PrettyWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.model.job.Shaman;
+import com.example.werewolfs.wereWolfDev.model.job.TombKeeper;
 import com.example.werewolfs.wereWolfDev.model.job.Witch;
 import com.example.werewolfs.wereWolfDev.model.job.Wolf;
 
@@ -76,6 +77,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private PrettyWolf prettyWolf = new PrettyWolf();
     private Gargoyle gargoyle = new Gargoyle();
     private Shaman shaman = new Shaman();
+    private TombKeeper tombKeeper = new TombKeeper();
 
     /**
      * observable object
@@ -429,6 +431,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     gameActivityNotify.notifySeeThrough(identity, seat, shaman);
                 }
                 break;
+            case 守墓人:
+                setSeat(tombKeeper, seat, true);
+                closeYourEyes(tombKeeper);
+                break;
             case 白天:
                 gameActivityNotify.notifyVoteCheck(seat);
                 break;
@@ -497,7 +503,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      *
      * @param bool
      */
-    private void setAllSeatState(boolean bool) {
+    public void setAllSeatState(boolean bool) {
         for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setClickable(bool);
         }
@@ -709,6 +715,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             gameActivityNotify.notifyPrettyWolfDead(lover);
             Static.dataModel.playerDead(lover);
         }
+        if(!tombKeeper.unChecked()){
+            tombKeeper.bury(seat);
+        }
         initSeatState();
     }
 
@@ -869,6 +878,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 通靈師:
                 openYourEyes(shaman);
+                break;
+            case 守墓人:
+                openYourEyes(tombKeeper);
+                if(dataModel.getTurn() != 1){
+                    setAllSeatState(false);
+                    gameActivityNotify.notifyInGrave(tombKeeper.identify(), tombKeeper);
+                }
                 break;
             case 白天:
                 dataModel.nightEnd();
