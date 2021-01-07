@@ -34,6 +34,7 @@ public class DataModel {
     private boolean isDay; //日夜
     private Action stage; //遊戲階段
     private int turn; //輪次
+    private boolean gameEnd;
     private List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
     private List<Integer> dieList = new ArrayList<>(); //死亡名單
     private HashMap<Action, Integer> godRoleMap = new HashMap<>(); //好人玩家對應的職業
@@ -49,6 +50,7 @@ public class DataModel {
         isDay = true;
         stage = Action.準備開始;
         turn = 1;
+        gameEnd = false;
         stageOrder.clear();
         dieList.clear();
         godRoleMap.clear();
@@ -210,6 +212,9 @@ public class DataModel {
     }
 
     private void checkGameEnd() {
+        if(gameEnd){
+            return;
+        }
         int wolfDeadCnt = 0;
         for(int seat : dieList){
             //算出死亡的狼的數量
@@ -219,19 +224,23 @@ public class DataModel {
         }
         if(wolfDeadCnt == wolfGroup.size() + wolfRoleMap.size()) {
             gameNotify.notifyGameEnd(EndType.好人勝利);
+            gameEnd = true;
         }
 
         if(gameEndRule){
             //屠城 除了狼 沒人活著
             if(godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()){
                 gameNotify.notifyGameEnd(EndType.屠城);
+                gameEnd = true;
             }
         }else{
             //屠邊
             if(dieList.containsAll(villagers)){
                 gameNotify.notifyGameEnd(EndType.屠民);
+                gameEnd = true;
             }else if(dieList.containsAll(godRoleMap.values())){
                 gameNotify.notifyGameEnd(EndType.屠神);
+                gameEnd = true;
             }
         }
     }
@@ -242,5 +251,14 @@ public class DataModel {
 
     public HashMap<Action, Integer> getWolfRoleMap(){
         return wolfRoleMap;
+    }
+
+    /**
+     * 判斷這場遊戲有沒有這個階段
+     * @param stage
+     * @return
+     */
+    public boolean hasStage(Action stage){
+        return stageOrder.contains(stage);
     }
 }

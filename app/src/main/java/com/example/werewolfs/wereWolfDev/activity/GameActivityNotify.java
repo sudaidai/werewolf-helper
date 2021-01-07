@@ -18,4 +18,10 @@ public interface GameActivityNotify {
      * @param wolfGroup
      */
     void notifyWolfFriend(List<Integer> wolfGroup);
+
+    /**
+     * 提示狼美人死亡，帶走她的戀人
+     * @param lover
+     */
+    void notifyPrettyWolfDead(int lover);
 }

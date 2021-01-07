@@ -197,4 +197,13 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setPositiveButton("ok", null)
                 .show();
     }
+
+    @Override
+    public void notifyPrettyWolfDead(int lover) {
+        new AlertDialog.Builder(this).setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(lover + " 玩家殉情了♥...")
+                .setPositiveButton("ok", null)
+                .show();
+    }
 }
