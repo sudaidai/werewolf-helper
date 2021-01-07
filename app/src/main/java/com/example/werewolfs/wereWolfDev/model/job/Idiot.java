@@ -8,7 +8,7 @@ public class Idiot extends Role {
 
     public Idiot(){
         stage = Action.白癡;
-        openSound = R.raw.idiot_yc_open;
-        closeSound = R.raw.idiot_yc_close;
+        openSound = R.raw.idiot_open;
+        closeSound = R.raw.idiot_close;
     }
 }

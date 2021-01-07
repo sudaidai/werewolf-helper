@@ -62,7 +62,7 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener{
     public void onCompletion(MediaPlayer mp) {
         //只要完成播放 檢查queue 有聲音在排隊的話 拿出來播放
         if(queue.peek() != null){
-            mediaPlayer = queue.poll(); //mediaPlayer指向新的參照 舊的會自動被回收(?)
+            mediaPlayer = queue.poll();
             mediaPlayer.start();
         }
     }

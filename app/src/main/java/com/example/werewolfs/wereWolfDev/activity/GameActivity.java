@@ -17,8 +17,10 @@ import androidx.databinding.DataBindingUtil;
 import com.example.werewolfs.R;
 import com.example.werewolfs.databinding.ActivityGameBinding;
 import com.example.werewolfs.wereWolfDev.SoundMgr;
+import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
+import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.viewModel.GameViewModel;
 
@@ -205,5 +207,24 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setTitle(lover + " 玩家殉情了♥...")
                 .setPositiveButton("ok", null)
                 .show();
+    }
+
+    @Override
+    public void notifySeeThrough(Action identity, int seat, Role role) {
+        AlertDialog seeThroughDialogue = new AlertDialog.Builder(GameActivity.this)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_launcher_background)
+                .setTitle(seat + "號玩家為:" + identity)
+                .setPositiveButton("ok", null)
+                .create();
+        seeThroughDialogue.show();
+
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {}
+            public void onFinish() {
+                seeThroughDialogue.cancel();
+                gameViewModel.closeYourEyes(role);
+            }
+        }.start();
     }
 }

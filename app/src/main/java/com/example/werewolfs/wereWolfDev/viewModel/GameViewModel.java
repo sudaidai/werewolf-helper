@@ -23,6 +23,7 @@ import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
 import com.example.werewolfs.wereWolfDev.model.job.Bear;
 import com.example.werewolfs.wereWolfDev.model.job.ForbiddenElder;
+import com.example.werewolfs.wereWolfDev.model.job.Gargoyle;
 import com.example.werewolfs.wereWolfDev.model.job.Guard;
 import com.example.werewolfs.wereWolfDev.model.job.HiddenWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Hunter;
@@ -31,6 +32,7 @@ import com.example.werewolfs.wereWolfDev.model.job.Knight;
 import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.PrettyWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
+import com.example.werewolfs.wereWolfDev.model.job.Shaman;
 import com.example.werewolfs.wereWolfDev.model.job.Witch;
 import com.example.werewolfs.wereWolfDev.model.job.Wolf;
 
@@ -72,6 +74,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private HiddenWolf hiddenWolf = new HiddenWolf();
     private ForbiddenElder forbiddenElder = new ForbiddenElder();
     private PrettyWolf prettyWolf = new PrettyWolf();
+    private Gargoyle gargoyle = new Gargoyle();
+    private Shaman shaman = new Shaman();
 
     /**
      * observable object
@@ -280,6 +284,18 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     setColorAndTextOn(tgBtn, "魅惑", Color.MAGENTA);
                 }
                 break;
+            case 石像鬼2:
+                choosePosition(seat);
+                setColorAndTextOn(tgBtn, "看透", Color.GRAY);
+                break;
+            case 通靈師:
+                choosePosition(seat);
+                if (shaman.unChecked()) {
+                    setColorAndTextOn(tgBtn, "通靈師", Color.BLUE);
+                } else {
+                    setColorAndTextOn(tgBtn, "看透", Color.GRAY);
+                }
+                break;
             case 白天:
                 choosePosition(seat);
                 setColorAndTextOn(tgBtn, "確認", Color.GREEN);
@@ -300,6 +316,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
         DataModel dataModel = Static.dataModel;
         HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
+        Action identity;
         switch (stage) {
             case 狼人:
                 seatsSelected.remove(new Integer(seat));
@@ -385,6 +402,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             case 狼美人:
                 if(prettyWolf.unChecked()){
                     useYourSkill(prettyWolf, seat, false);
+                    dataModel.getWolfGroup().add(seat); //為預言家查殺對象
                     ctrlBtnField.text.set("空綁");
                     ctrlBtnField.clickable.set(true);
                 }else{
@@ -392,6 +410,23 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     ctrlBtnField.text.set("夜晚");
                     ctrlBtnField.clickable.set(false);
                     closeYourEyes(prettyWolf);
+                }
+                break;
+            case 石像鬼:
+                setSeat(gargoyle, seat, false);
+                dataModel.getWolfGroup().add(seat); //為預言家查殺對象
+                closeYourEyes(gargoyle);
+                break;
+            case 石像鬼2:
+                identity = gargoyle.seeThrough(seat);
+                gameActivityNotify.notifySeeThrough(identity, seat, gargoyle);
+                break;
+            case 通靈師:
+                if (shaman.unChecked()) {
+                    useYourSkill(shaman, seat, true);
+                } else {
+                    identity = shaman.seeThrough(seat);
+                    gameActivityNotify.notifySeeThrough(identity, seat, shaman);
                 }
                 break;
             case 白天:
@@ -825,6 +860,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     ctrlBtnField.clickable.set(true);
                     ctrlBtnField.text.set("空綁");
                 }
+                break;
+            case 石像鬼:
+                //只有第一輪確認身分時會用到 睜眼確認身分
+            case 石像鬼2:
+                //睜眼看某個人身分
+                openYourEyes(gargoyle);
+                break;
+            case 通靈師:
+                openYourEyes(shaman);
                 break;
             case 白天:
                 dataModel.nightEnd();

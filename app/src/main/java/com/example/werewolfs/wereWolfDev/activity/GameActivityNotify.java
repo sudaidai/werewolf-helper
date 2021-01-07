@@ -1,5 +1,7 @@
 package com.example.werewolfs.wereWolfDev.activity;
 
+import com.example.werewolfs.wereWolfDev.constant.Action;
+import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 
 import java.util.List;
@@ -24,4 +26,11 @@ public interface GameActivityNotify {
      * @param lover
      */
     void notifyPrettyWolfDead(int lover);
+
+    /**
+     * 看某個座位真實身分的結果
+     * @param identity
+     * @param seat
+     */
+    void notifySeeThrough(Action identity, int seat, Role role);
 }
