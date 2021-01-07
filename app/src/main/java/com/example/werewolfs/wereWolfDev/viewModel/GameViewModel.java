@@ -169,9 +169,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     closeYourEyes(guard);
                     break;
                 case 禁言長老:
-                    closeYourEyes(forbiddenElder);
                     forbiddenElder.mute(0);
                     closeYourEyes(forbiddenElder);
+                    break;
+                case 狼美人:
+                    prettyWolf.charm(0);
+                    closeYourEyes(prettyWolf);
                     break;
                 default:
             }
