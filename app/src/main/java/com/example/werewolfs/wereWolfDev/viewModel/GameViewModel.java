@@ -149,6 +149,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     public void onCenterClick() {
         DataModel dataModel = Static.dataModel;
+        ctrlBtnField.clickable.set(false);
         if (dataModel.isDay()) {
             music.playSound(R.raw.howling);
             dataModel.dayEnd();
@@ -183,7 +184,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
             initSelect();
             ctrlBtnField.text.set("夜晚");
-            ctrlBtnField.clickable.set(false);
             dataModel.setNextStage();
         }
     }
