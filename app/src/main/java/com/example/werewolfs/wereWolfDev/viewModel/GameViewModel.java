@@ -182,9 +182,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 setPositionFalse(selected);
             }
             initSelect();
-            dataModel.setNextStage();
             ctrlBtnField.text.set("夜晚");
             ctrlBtnField.clickable.set(false);
+            dataModel.setNextStage();
         }
     }
 
