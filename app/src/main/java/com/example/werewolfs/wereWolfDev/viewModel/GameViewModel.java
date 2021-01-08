@@ -51,6 +51,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private static final String TAG = "GameViewModel";
     private GameActivityNotify gameActivityNotify;
+    private DataModel dataModel = Static.dataModel;
 
     /**
      * 儲存使用者行為 當前被選擇對象 上一次被選擇對象(用於單選)
@@ -103,6 +104,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private SoundMgr music;
     private ToggleButton[] tgBtnGroup;
     String message = "";
+    private boolean knifeOnTheGround;
 
     /**
      * observable variable
@@ -126,8 +128,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         announcement.set("準備開始");
         initSelect();
         seatsSelected = new ArrayList<>();
-
-        Static.dataModel.setGameNotify(this);
+        knifeOnTheGround = false;
+        dataModel.setGameNotify(this);
     }
 
     public void initSelect() {
@@ -136,7 +138,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     }
 
     public void initGameVariable() {
-        Static.dataModel.initGameVariable();
+        dataModel.initGameVariable();
     }
 
     public void createSound() {
@@ -145,7 +147,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     public void setTgBtn(ToggleButton[] tgBtnGroup) {
         this.tgBtnGroup = tgBtnGroup;
-        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
+        for (int i = 1; i <= dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setOnCheckedChangeListener(onSeatClick);
         }
     }
@@ -154,7 +156,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * 中間按鈕點擊事件
      */
     public void onCenterClick() {
-        DataModel dataModel = Static.dataModel;
         ctrlBtnField.clickable.set(false);
         if (dataModel.isDay()) {
             music.playSound(R.raw.howling);
@@ -199,12 +200,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     private CompoundButton.OnCheckedChangeListener onSeatClick = ((buttonView, isChecked) -> {
         int seat = findIndexByBtnArray(buttonView);
-        Action stage = Static.dataModel.getStage();
+        Action stage = dataModel.getStage();
 
         if (isChecked) {
             checkedEvent(seat, stage);
         } else {
-            if (Static.dataModel.isDay()) {
+            if (dataModel.isDay()) {
                 buttonView.setBackgroundColor(Color.WHITE);
             } else {
                 buttonView.setBackgroundColor(Color.BLACK);
@@ -215,7 +216,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private void checkedEvent(int seat, Action stage) {
         ToggleButton tgBtn = tgBtnGroup[seat];
-        DataModel dataModel = Static.dataModel;
         HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
         switch (stage) {
             case 狼人:
@@ -288,7 +288,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 石像鬼2:
                 choosePosition(seat);
-                setColorAndTextOn(tgBtn, "看透", Color.GRAY);
+                if(knifeOnTheGround){
+                    setColorAndTextOn(tgBtn, "擊殺", Color.RED);
+                }else{
+                    setColorAndTextOn(tgBtn, "看透", Color.GRAY);
+                }
                 break;
             case 通靈師:
                 choosePosition(seat);
@@ -316,7 +320,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
         }
 
-        DataModel dataModel = Static.dataModel;
         HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
         Action identity;
         switch (stage) {
@@ -324,6 +327,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 seatsSelected.remove(new Integer(seat));
                 break;
             case 殺人:
+                tgBtnGroup[wolves.getKnifeOn()].setClickable(true); //同刀的座位鎖定解除
                 wolves.kill(seat);
                 music.playSound(R.raw.wolf_close);
                 dataModel.setNextStage();
@@ -420,8 +424,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 closeYourEyes(gargoyle);
                 break;
             case 石像鬼2:
-                identity = gargoyle.seeThrough(seat);
-                gameActivityNotify.notifySeeThrough(identity, seat, gargoyle);
+                if(knifeOnTheGround){
+                    wolves.kill(seat);
+                    dataModel.setNextStage();
+                }else{
+                    identity = gargoyle.seeThrough(seat);
+                    gameActivityNotify.notifySeeThrough(identity, seat, gargoyle);
+                }
                 break;
             case 通靈師:
                 if (shaman.unChecked()) {
@@ -447,7 +456,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
 
     public void onYesClick() {
-        DataModel dataModel = Static.dataModel;
         List<Integer> wolves = dataModel.getWolfGroup();
         wolves.addAll(seatsSelected);
 
@@ -456,7 +464,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         }
         checkVisible.set(false);
         Log.d(TAG, "wolves-> " + wolves);
-        Static.dataModel.setNextStage();
+        dataModel.setNextStage();
     }
 
     public void onNoClick() {
@@ -490,7 +498,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     public void setPositionFalse(int pos) {
         tgBtnGroup[pos].setChecked(false);
-        if (Static.dataModel.isDay()) {
+        if (dataModel.isDay()) {
             tgBtnGroup[pos].setBackgroundColor(Color.WHITE);
         } else {
             tgBtnGroup[pos].setBackgroundColor(Color.BLACK);
@@ -504,7 +512,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * @param bool
      */
     public void setAllSeatState(boolean bool) {
-        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
+        for (int i = 1; i <= dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setClickable(bool);
         }
     }
@@ -514,7 +522,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     private void setAllTgBtnStyle() {
         int textColor, bgColor;
-        if (Static.dataModel.isDay()) {
+        if (dataModel.isDay()) {
             textColor = Color.BLACK;
             bgColor = Color.WHITE;
         } else {
@@ -522,7 +530,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             bgColor = Color.BLACK;
         }
 
-        for (int i = 1; i <= Static.dataModel.getPeoCnt(); i++) {
+        for (int i = 1; i <= dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setTextColor(textColor);
             tgBtnGroup[i].setBackgroundColor(bgColor);
         }
@@ -603,7 +611,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * @param seat
      */
     public void repeatSelectionCheck(int seat) {
-        DataModel dataModel = Static.dataModel;
         if (dataModel.getGodRoleMap().values().contains(seat)
                 || dataModel.getWolfRoleMap().values().contains(seat)) {
             gameActivityNotify.notifyRepeatSelect();
@@ -617,7 +624,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     public void initSeatState() {
         setAllSeatState(true);
-        for (int seat : Static.dataModel.getDieList()) {
+        for (int seat : dataModel.getDieList()) {
             tgBtnGroup[seat].setClickable(false);
             tgBtnGroup[seat].setBackgroundColor(Color.RED);
             tgBtnGroup[seat].setText("DIE");
@@ -627,7 +634,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private void openYourEyes(Role role) {
         announcement.set(role.stage + "請睜眼");
         music.playSound(role.openSound);
-        if (Static.dataModel.getDieList().contains(role.getSeat())) {
+        if (dataModel.getDieList().contains(role.getSeat())) {
             skipStage();
             setAllSeatState(false);
         } else {
@@ -641,9 +648,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         announcement.set(stage + "請使用技能");
         music.playSound(role.skillSound);
         if(isGod){
-            Static.dataModel.getGodRoleMap().put(stage, seat);
+            dataModel.getGodRoleMap().put(stage, seat);
         }else{
-            Static.dataModel.getWolfRoleMap().put(stage, seat);
+            dataModel.getWolfRoleMap().put(stage, seat);
         }
         role.setSeat(seat);
         Log.d(TAG, stage + "為 : " + seat + "號玩家");
@@ -653,9 +660,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         repeatSelectionCheck(seat);
         Action stage = role.stage;
         if(isGod){
-            Static.dataModel.getGodRoleMap().put(stage, seat);
+            dataModel.getGodRoleMap().put(stage, seat);
         }else{
-            Static.dataModel.getWolfRoleMap().put(stage, seat);
+            dataModel.getWolfRoleMap().put(stage, seat);
         }
         role.setSeat(seat);
         initSelect();
@@ -665,7 +672,21 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     public void closeYourEyes(Role role) {
         music.cancelSound();
         music.playSound(role.closeSound);
-        Static.dataModel.setNextStage();
+        dataModel.setNextStage();
+    }
+
+    /**
+     * 每天晚上，石像鬼都想要跟上帝要刀子
+     */
+    public void gargoyleGetKnife(){
+        if(dataModel.wolvesDead()){
+            // 刀子在地上 石像鬼撿起來
+            knifeOnTheGround = true;
+            announcement.set("雙擊殺人");
+        }else {
+            //上帝不給他 叫他閉上眼滾開
+            closeYourEyes(gargoyle);
+        }
     }
 
     /**
@@ -676,7 +697,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         SimpleDateFormat sdf = new SimpleDateFormat("mm");
         Date now = new Date(System.currentTimeMillis());
         int min = Integer.parseInt(sdf.format(now));
-        int speakOrder = (min % (Static.dataModel.getPeoCnt())) + 1;
+        int speakOrder = (min % (dataModel.getPeoCnt())) + 1;
         if(random() < 0.5){
             speakOrder = -speakOrder;
         }
@@ -708,12 +729,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     /** 白天投票*/
     public void voteOn(int seat){
-        Static.dataModel.playerDead(seat);
+        dataModel.playerDead(seat);
         if(seat == prettyWolf.getSeat()){
             //如果投了狼美人出去
             int lover = prettyWolf.getLover();
             gameActivityNotify.notifyPrettyWolfDead(lover);
-            Static.dataModel.playerDead(lover);
+            dataModel.playerDead(lover);
         }
         if(!tombKeeper.unChecked()){
             tombKeeper.bury(seat);
@@ -746,40 +767,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         }
     }
 
-    /** 熊吼叫邏輯*/
-    private boolean bearRoar(){
-        DataModel dataModel = Static.dataModel;
-        int seat = bear.getSeat();
-        int peo_cnt = dataModel.getPeoCnt();
-        List<Integer> dieList = dataModel.getDieList();
-        List<Integer> wolfGroup = dataModel.getWolfGroup();
-        int right = seat, left = seat;
-        do{
-            left = (left - 1) % peo_cnt;
-            if(left == 0) { left = peo_cnt; }
-        }while(dieList.contains(left));
-
-        if(wolfGroup.contains(left)){
-            return true;
-        }
-        do{
-            right = (right + 1) % peo_cnt;
-            if(right == 0) { right = 1; }
-        }while(dieList.contains(right));
-
-        if(wolfGroup.contains(right)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
-
-
     @Override
     public void notifyStageChanged(Action stage) {
-        DataModel dataModel = Static.dataModel;
         switch (stage) {
             case 狼人:
                 announcement.set("狼人請睜眼");
@@ -795,11 +784,17 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 }
                 break;
             case 殺人:
-                announcement.set("雙擊殺人");
                 music.playSound(R.raw.wolf_kill);
+                tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
+                if(dataModel.wolvesDead()){
+                    setAllSeatState(false);
+                    skipStage();
+                }else{
+                    announcement.set("雙擊殺人");
+                }
                 break;
             case 女巫:
-                if (Static.dataModel.getTurn() != 1) {
+                if (dataModel.getTurn() != 1) {
                     /**
                      * 不是第一個輪次時，女巫可能沒有藥，控制女巫可以點選的座位
                      */
@@ -850,7 +845,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 隱狼:
                 openYourEyes(hiddenWolf);
-                gameActivityNotify.notifyWolfFriend(Static.dataModel.getWolfGroup());
+                gameActivityNotify.notifyWolfFriend(dataModel.getWolfGroup());
                 break;
             case 禁言長老:
                 if(dataModel.getTurn() != 1){
@@ -895,7 +890,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     @Override
     public void notifyDayEnd() {
-        DataModel dataModel = Static.dataModel;
         ctrlBtnField.textColor.set(Color.BLACK);
         ctrlBtnField.background.set(true);
         ctrlBtnField.clickable.set(false);
@@ -916,8 +910,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     public void notifyNightEnd(){
         message = "";
         List<Integer> dieList_today = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
-        List<Integer> dieList = Static.dataModel.getDieList();
-        int turn = Static.dataModel.getTurn();
+        List<Integer> dieList = dataModel.getDieList();
+        int turn = dataModel.getTurn();
 
         /**
          * 目前玩家會死亡的狀況
@@ -929,7 +923,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         if((knifeOn != witch.getIsSave())
          || witch.getIsSave() == guard.getIsProtected()
          && knifeOn != guard.getIsProtected()){
-            Static.dataModel.playerDead(knifeOn);
+            dataModel.playerDead(knifeOn);
             dieList_today.add(knifeOn);
             witch.setIsSave(0);
         }
@@ -939,7 +933,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             //女巫有投毒
             if(!dieList_today.contains(isPoisoned)){
                 //被毒的人未死，加入死亡名單
-                Static.dataModel.playerDead(isPoisoned);
+                dataModel.playerDead(isPoisoned);
                 dieList_today.add(isPoisoned);
             }
             witch.setIsPoisoned(0);
@@ -962,7 +956,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         }
 
         if(!bear.unChecked() && bear.isAlive){
-            boolean roar = bearRoar();
+            boolean roar = bear.roar();
             if(roar){
                 music.playSound(bear.skillSound);
                 message += ", 熊叫了！(╬ﾟдﾟ)";
@@ -986,7 +980,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 dayBreak(dieList_today, turn);
             }
         }.start();
-        Static.dataModel.nextTurn();
+        dataModel.nextTurn();
     }
 
     @Override
@@ -994,7 +988,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         Log.d(TAG, "遊戲結束");
         String endText = "遊戲結束 " + endType;
         String endMessage = "";
-        HashMap<Action, Integer> godRoleMap = Static.dataModel.getGodRoleMap();
+        HashMap<Action, Integer> godRoleMap = dataModel.getGodRoleMap();
         for(Action act : godRoleMap.keySet()){
             endMessage += "\n" + godRoleMap.get(act) + " . " + act;
         }
@@ -1005,7 +999,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     public void notifyShowHiddenWolf() {
         int seat = hiddenWolf.getSeat();
         if(seat != 0){
-            Static.dataModel.getWolfGroup().add(seat);
+            dataModel.getWolfGroup().add(seat);
         }
     }
 }

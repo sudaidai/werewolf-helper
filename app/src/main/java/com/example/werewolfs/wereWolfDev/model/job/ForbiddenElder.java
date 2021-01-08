@@ -6,6 +6,11 @@ import com.example.werewolfs.wereWolfDev.model.Role;
 
 public class ForbiddenElder extends Role {
 
+    /**
+     * 禁言長老每晚可以選擇一名玩家進行禁言，該玩家在下一白天階段不能說話，
+     * 只能以肢體語言表達想法。
+     */
+
     private int muted;
 
     public ForbiddenElder(){

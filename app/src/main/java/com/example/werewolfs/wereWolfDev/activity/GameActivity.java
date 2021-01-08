@@ -224,7 +224,11 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
             public void onTick(long millisUntilFinished) {}
             public void onFinish() {
                 seeThroughDialogue.cancel();
-                gameViewModel.closeYourEyes(role);
+                if(role.stage == Action.石像鬼){
+                    gameViewModel.gargoyleGetKnife();
+                }else{
+                    gameViewModel.closeYourEyes(role);
+                }
             }
         }.start();
     }

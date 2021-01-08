@@ -103,7 +103,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         binding.gargoyle.setOnCheckedChangeListener(characterListener);
         binding.shaman.setOnCheckedChangeListener(characterListener);
         binding.hiddenWolf.setOnCheckedChangeListener(characterListener);
-        binding.foxGod.setOnCheckedChangeListener(characterListener);
+        binding.wildChild.setOnCheckedChangeListener(characterListener);
 
         setTextTotalCount(peoCntChose);
     }
@@ -124,7 +124,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         LinkedHashMap<Action, Boolean> role_map = Static.dataModel.getRoleMap();
         role_map.put(Action.隱狼, binding.hiddenWolf.isChecked());
         role_map.put(Action.狼美人, binding.prettyWolf.isChecked());
-        role_map.put(Action.狐仙, binding.foxGod.isChecked());
+        role_map.put(Action.狐仙, false);
         role_map.put(Action.惡靈騎士, false);
         role_map.put(Action.陰陽使者, false);
         role_map.put(Action.女巫, binding.witch.isChecked());
@@ -139,7 +139,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         role_map.put(Action.禁言長老, binding.forbiddenElder.isChecked());
         role_map.put(Action.守墓人, binding.tombKeeper.isChecked());
         role_map.put(Action.守衛, binding.guard.isChecked());
-        role_map.put(Action.野孩子, false);
+        role_map.put(Action.野孩子, binding.wildChild.isChecked());
         role_map.put(Action.混血兒, false);
         role_map.put(Action.盜賊, false);
         role_map.put(Action.九尾妖狐, false);

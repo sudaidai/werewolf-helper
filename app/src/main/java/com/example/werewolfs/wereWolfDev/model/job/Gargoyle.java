@@ -12,6 +12,11 @@ import java.util.HashMap;
 
 public class Gargoyle extends Role {
 
+    /**
+     * 石像鬼不與狼隊相認，每晚可查驗一名玩家的實際身份。遊戲開始時不帶狼刀，當其餘狼同伴均被淘汰時，
+     * 石像鬼帶刀，由上帝以手勢告知。石像鬼帶刀時，可先查驗玩家身份再行使狼刀。石像鬼不能自爆但可以自刀。
+     */
+
     private static final String TAG = "Gargoyle";
 
     public Gargoyle(){

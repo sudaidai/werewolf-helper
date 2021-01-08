@@ -261,4 +261,12 @@ public class DataModel {
     public boolean hasStage(Action stage){
         return stageOrder.contains(stage);
     }
+
+    /**
+     * 判斷是不是狼人死光了，刀子在地上
+     * @return
+     */
+    public boolean wolvesDead(){
+        return dieList.containsAll(wolfGroup);
+    }
 }

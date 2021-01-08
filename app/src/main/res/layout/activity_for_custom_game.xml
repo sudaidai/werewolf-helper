@@ -176,11 +176,11 @@
                 android:text="熊" />
 
             <CheckBox
-                android:id="@+id/foxGod"
+                android:id="@+id/wildChild"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_margin="1sp"
-                android:text="狐仙" />
+                android:text="野孩子" />
 
             <CheckBox
                 android:id="@+id/magician"
