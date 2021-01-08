@@ -234,7 +234,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 if (witch.unChecked()) {
                     setColorAndTextOn(tgBtn, "女巫", Color.BLUE);
                 } else {
-                    if (dataModel.isWitchSaveRule() && dataModel.getTurn() == 1) {
+                    if (dataModel.isWitchSaveRule() && dataModel.isFirstDay()) {
                         //女巫可以自救的情況
                         if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
@@ -246,7 +246,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     } else {
                         if (witch.getSeat() == selected) {
                             setColorAndTextOn(tgBtn, "不用藥?", Color.BLUE);
-                        } else if (wolves.getKnifeOn() == selected && witch.hasHerbal()) {
+                        } else if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
                         } else {
                             setColorAndTextOn(tgBtn, "毒殺?", Color.RED);
@@ -327,7 +327,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 seatsSelected.remove(new Integer(seat));
                 break;
             case 殺人:
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     tgBtnGroup[wolves.getKnifeOn()].setClickable(true); //同刀的座位鎖定解除
                 }
                 wolves.kill(seat);
@@ -780,14 +780,14 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     announcement.set(Action.狼美人 + "請睜眼");
                     music.playSound(prettyWolf.openSound);
                 }
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     //第一輪之後狼人不用確認身分 播放聲音後跳到殺人
                     dataModel.setNextStage();
                 }
                 break;
             case 殺人:
                 music.playSound(R.raw.wolf_kill);
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
                 }
                 if(dataModel.wolvesDead()){
@@ -798,7 +798,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 }
                 break;
             case 女巫:
-                if (dataModel.getTurn() != 1) {
+                if (!dataModel.isFirstDay()) {
                     /**
                      * 不是第一個輪次時，女巫可能沒有藥，控制女巫可以點選的座位
                      */
@@ -827,7 +827,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 守衛:
                 openYourEyes(guard);
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     ctrlBtnField.text.set("空守");
                     ctrlBtnField.clickable.set(true);
                 }
@@ -852,7 +852,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 gameActivityNotify.notifyWolfFriend(dataModel.getWolfGroup());
                 break;
             case 禁言長老:
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     ctrlBtnField.text.set("空禁");
                     ctrlBtnField.clickable.set(true);
                 }
@@ -863,7 +863,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 if (dataModel.getDieList().contains(prettyWolf.getSeat())) {
                     skipStage();
                     setAllSeatState(false);
-                } else if(dataModel.getTurn() != 1) {
+                } else if(!dataModel.isFirstDay()) {
                     music.playSound(prettyWolf.skillSound);
                     ctrlBtnField.clickable.set(true);
                     ctrlBtnField.text.set("空綁");
@@ -880,7 +880,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 守墓人:
                 openYourEyes(tombKeeper);
-                if(dataModel.getTurn() != 1){
+                if(!dataModel.isFirstDay()){
                     setAllSeatState(false);
                     gameActivityNotify.notifyInGrave(tombKeeper.identify(), tombKeeper);
                 }

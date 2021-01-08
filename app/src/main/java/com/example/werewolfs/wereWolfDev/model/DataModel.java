@@ -269,4 +269,6 @@ public class DataModel {
     public boolean wolvesDead(){
         return dieList.containsAll(wolfGroup);
     }
+
+    public boolean isFirstDay(){ return turn==1; }
 }
