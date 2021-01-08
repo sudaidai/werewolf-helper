@@ -327,7 +327,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 seatsSelected.remove(new Integer(seat));
                 break;
             case 殺人:
-                tgBtnGroup[wolves.getKnifeOn()].setClickable(true); //同刀的座位鎖定解除
+                if(dataModel.getTurn() != 1){
+                    tgBtnGroup[wolves.getKnifeOn()].setClickable(true); //同刀的座位鎖定解除
+                }
                 wolves.kill(seat);
                 music.playSound(R.raw.wolf_close);
                 dataModel.setNextStage();
@@ -785,7 +787,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 殺人:
                 music.playSound(R.raw.wolf_kill);
-                tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
+                if(dataModel.getTurn() != 1){
+                    tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
+                }
                 if(dataModel.wolvesDead()){
                     setAllSeatState(false);
                     skipStage();
