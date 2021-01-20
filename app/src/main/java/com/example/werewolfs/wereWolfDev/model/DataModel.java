@@ -16,7 +16,16 @@ import java.util.List;
 public class DataModel {
 
     private static final String TAG = "DataModel";
+    private static DataModel instance = new DataModel();
     GameNotify gameNotify;
+
+    private DataModel() {
+
+    }
+
+    public static DataModel getInstance() {
+        return instance;
+    }
 
     /** 狼人數量*/
     private int wolfCnt;
@@ -62,7 +71,6 @@ public class DataModel {
         stageOrder.add(Action.狼人);
         stageOrder.add(Action.殺人);
 
-        HashMap<Action, Boolean> roleMap = Static.dataModel.getRoleMap();
         for(Action act : roleMap.keySet()){
             if(roleMap.get(act)){
                 stageOrder.add(act);

@@ -13,6 +13,7 @@ import com.example.werewolfs.R;
 import com.example.werewolfs.databinding.ActivityForCustomGameBinding;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.constant.Static;
+import com.example.werewolfs.wereWolfDev.model.DataModel;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,6 +23,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
     /** auto-generating class*/
     public ActivityForCustomGameBinding binding;
 
+    private DataModel dataModel = DataModel.getInstance();
     private int wolf_cnt_temp; //畫面預設值 可以做Observe 暫用4
     private int peoCntChose;
 
@@ -49,7 +51,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         });
 
         binding.btnStart.setOnClickListener(view ->{
-            Static.dataModel.setWolfCnt(wolf_cnt_temp);
+            dataModel.setWolfCnt(wolf_cnt_temp);
             setRole();
             setRule();
             Intent it = new Intent(ActivityForCustomGame.this, GameActivity.class);
@@ -114,14 +116,14 @@ public class ActivityForCustomGame extends AppCompatActivity {
     }
 
     private void setRule() {
-        Static.dataModel.setWitchSaveRule(binding.witchSwitch.isChecked());
-        Static.dataModel.setGameEndRule(binding.killSwitch.isChecked());
-        Static.dataModel.setPrettyWolfRule(binding.prettyWolfSwitch.isChecked());
-        Static.dataModel.setHunterKillRule(binding.hunterDoubleKillSwitch.isChecked());
+        dataModel.setWitchSaveRule(binding.witchSwitch.isChecked());
+        dataModel.setGameEndRule(binding.killSwitch.isChecked());
+        dataModel.setPrettyWolfRule(binding.prettyWolfSwitch.isChecked());
+        dataModel.setHunterKillRule(binding.hunterDoubleKillSwitch.isChecked());
     }
 
     private void setRole(){
-        LinkedHashMap<Action, Boolean> role_map = Static.dataModel.getRoleMap();
+        LinkedHashMap<Action, Boolean> role_map = dataModel.getRoleMap();
         role_map.put(Action.隱狼, binding.hiddenWolf.isChecked());
         role_map.put(Action.狼美人, binding.prettyWolf.isChecked());
         role_map.put(Action.狐仙, false);
@@ -148,7 +150,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
     }
 
     private void setTextTotalCount(int peoCntChose){
-        binding.totalCount.setText("已選擇 : " + peoCntChose + " / " + Static.dataModel.getPeoCnt());
+        binding.totalCount.setText("已選擇 : " + peoCntChose + " / " + dataModel.getPeoCnt());
     }
 
     private CompoundButton.OnCheckedChangeListener characterListener = (buttonView, isChecked) ->

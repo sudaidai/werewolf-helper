@@ -51,7 +51,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private static final String TAG = "GameViewModel";
     private GameActivityNotify gameActivityNotify;
-    private DataModel dataModel = Static.dataModel;
+    private DataModel dataModel = DataModel.getInstance();
 
     /**
      * 儲存使用者行為 當前被選擇對象 上一次被選擇對象(用於單選)
