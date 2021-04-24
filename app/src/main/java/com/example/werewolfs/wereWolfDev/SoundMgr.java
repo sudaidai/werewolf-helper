@@ -10,9 +10,7 @@ import android.util.Log;
 
 import com.example.werewolfs.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class SoundMgr implements MediaPlayer.OnCompletionListener{
@@ -39,6 +37,7 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener{
             cd.setOnCompletionListener(this);
             queue.offer(cd);
         }else{
+            mediaPlayer.release();
             mediaPlayer = MediaPlayer.create(mContext, _id);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.start();
@@ -60,8 +59,11 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener{
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+
         //只要完成播放 檢查queue 有聲音在排隊的話 拿出來播放
         if(queue.peek() != null){
+            mediaPlayer.release();
+            Log.d(TAG, "onCompletion: playing next sound.");
             mediaPlayer = queue.poll();
             mediaPlayer.start();
         }

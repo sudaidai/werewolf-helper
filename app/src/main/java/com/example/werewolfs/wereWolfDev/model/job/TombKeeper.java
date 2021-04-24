@@ -23,7 +23,7 @@ public class TombKeeper extends Role {
     }
 
     public void bury(int inGrave) {
-        DataModel dataModel = Static.dataModel;
+        DataModel dataModel = DataModel.getInstance();
         this.inGrave = inGrave;
         identity = !(dataModel.getWolfGroup().contains(inGrave) ||
         dataModel.getWolfRoleMap().values().contains(inGrave));

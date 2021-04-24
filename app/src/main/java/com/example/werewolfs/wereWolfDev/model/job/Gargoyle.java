@@ -28,7 +28,7 @@ public class Gargoyle extends Role {
 
     public Action seeThrough(int seat){
         Log.d(TAG, "seeThrough: " + seat);
-        DataModel dataModel = Static.dataModel;
+        DataModel dataModel = DataModel.getInstance();
         HashMap<Action, Integer> tempRoleMap = dataModel.getGodRoleMap();
         for(Action stage : tempRoleMap.keySet()){
             if(tempRoleMap.get(stage) == seat){

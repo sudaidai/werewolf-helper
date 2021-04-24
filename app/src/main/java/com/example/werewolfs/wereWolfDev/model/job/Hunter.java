@@ -11,4 +11,8 @@ public class Hunter extends Role {
         openSound = R.raw.hunter4;
         closeSound = R.raw.hunter2;
     }
+
+    public boolean activeSkill(){
+        return true;
+    }
 }

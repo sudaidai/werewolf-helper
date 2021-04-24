@@ -56,7 +56,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         LinearLayout bottom = binding.bottom;
 
         /** create toggleBtn by count of people*/
-        int peoCnt = Static.dataModel.getPeoCnt();
+        int peoCnt = DataModel.getInstance().getPeoCnt();
         for(int i=1 ; i <= peoCnt/2 ; i++){
             top.addView(createToggleBtn(i));
         }

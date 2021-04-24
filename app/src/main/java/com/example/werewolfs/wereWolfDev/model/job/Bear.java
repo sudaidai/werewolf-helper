@@ -26,7 +26,7 @@ public class Bear extends Role {
      *@return 當天早上是否會吼叫
      */
     public boolean roar(){
-        DataModel dataModel = Static.dataModel;
+        DataModel dataModel = DataModel.getInstance();
         int seat = getSeat();
         int peo_cnt = dataModel.getPeoCnt();
         List<Integer> dieList = dataModel.getDieList();

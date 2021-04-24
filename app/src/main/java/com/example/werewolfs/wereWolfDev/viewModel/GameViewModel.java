@@ -191,7 +191,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
             initSelect();
             ctrlBtnField.text.set("夜晚");
-            dataModel.setNextStage();
         }
     }
 
@@ -812,11 +811,16 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                         if (!witch.hasPoison()) {
                             setAllSeatState(false);
                             tgBtnGroup[seat].setClickable(true);
-                            if (witch.hasHerbal()) {
-                                tgBtnGroup[wolves.getKnifeOn()].setClickable(true);
-                            } else {
-                                announcement.set("沒藥了點自己");
-                            }
+                        }
+
+                        if (witch.hasHerbal()) {
+                            int knifeOn = wolves.getKnifeOn();
+                            tgBtnGroup[knifeOn].setClickable(true);
+                            tgBtnGroup[knifeOn].setBackgroundColor(Color.RED);
+                        }
+
+                        if(!witch.hasMedicine()){
+                            announcement.set("沒藥了點自己");
                         }
                     }
                 } else {
@@ -942,6 +946,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
             witch.setIsPoisoned(0);
         }
+
         Collections.sort(dieList_today);
         Log.d(TAG, "dieList(today) -> " + dieList_today);
 
