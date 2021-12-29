@@ -21,7 +21,7 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener{
     public MediaPlayer cd;
     private SoundPool sp;
     private HashMap<Integer, Integer> soundID = new HashMap<Integer, Integer>();
-    private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(5);
+    private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(10);
 
     public SoundMgr(Context context){
         mContext = context;

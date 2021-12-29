@@ -1,5 +1,7 @@
 package com.example.werewolfs.wereWolfDev.viewModel;
 
+import static java.lang.Math.random;
+
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
@@ -19,8 +21,8 @@ import com.example.werewolfs.wereWolfDev.SoundMgr;
 import com.example.werewolfs.wereWolfDev.activity.GameActivityNotify;
 import com.example.werewolfs.wereWolfDev.constant.Action;
 import com.example.werewolfs.wereWolfDev.constant.EndType;
-import com.example.werewolfs.wereWolfDev.constant.Static;
 import com.example.werewolfs.wereWolfDev.model.DataModel;
+import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.Bear;
 import com.example.werewolfs.wereWolfDev.model.job.ForbiddenElder;
 import com.example.werewolfs.wereWolfDev.model.job.Gargoyle;
@@ -29,7 +31,6 @@ import com.example.werewolfs.wereWolfDev.model.job.HiddenWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Hunter;
 import com.example.werewolfs.wereWolfDev.model.job.Idiot;
 import com.example.werewolfs.wereWolfDev.model.job.Knight;
-import com.example.werewolfs.wereWolfDev.model.Role;
 import com.example.werewolfs.wereWolfDev.model.job.PrettyWolf;
 import com.example.werewolfs.wereWolfDev.model.job.Seer;
 import com.example.werewolfs.wereWolfDev.model.job.Shaman;
@@ -43,9 +44,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import static java.lang.Math.decrementExact;
-import static java.lang.Math.random;
 
 public class GameViewModel extends AndroidViewModel implements GameNotify {
 
