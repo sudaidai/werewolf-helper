@@ -17,7 +17,7 @@ public class DataModel {
 
     private static final String TAG = "DataModel";
     private static DataModel instance = new DataModel();
-    GameNotify gameNotify;
+    private GameNotify gameNotify;
 
     private DataModel() {
 
@@ -46,6 +46,8 @@ public class DataModel {
     private boolean gameEnd;
     private List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
     private List<Integer> dieList = new ArrayList<>(); //死亡名單
+
+    private List<Action> actionList = new ArrayList(); //座位表對應職業
     private HashMap<Action, Integer> godRoleMap = new HashMap<>(); //好人玩家對應的職業
     private HashMap<Action, Integer> wolfRoleMap = new HashMap<>(); //狼人玩家對應的職業
     private List<Integer> wolfGroup = new ArrayList<>(); //狼人名單
@@ -66,6 +68,7 @@ public class DataModel {
         wolfRoleMap.clear();
         wolfGroup.clear();
         villagers.clear();
+        actionList.clear();
 
         stageOrder.add(Action.準備開始);
         stageOrder.add(Action.狼人);
@@ -79,6 +82,10 @@ public class DataModel {
         stageOrder.add(Action.白天);
 
         Log.d("DataModel ->" ,"stageOrder:" + stageOrder);
+    }
+
+    public List<Action> getActionList() {
+        return actionList;
     }
 
     public int getWolfCnt() {
@@ -149,6 +156,7 @@ public class DataModel {
         isDay = true;
         if(turn == 1){
             addVillagers();
+            initActionList();
         }
         gameNotify.notifyNightEnd();
     }
@@ -183,7 +191,7 @@ public class DataModel {
 
     private void addVillagers(){
         for(int i=1 ; i<=peoCnt ; i++){
-            if(!(godRoleMap.containsKey(i) || wolfGroup.contains(i) || wolfRoleMap.containsKey(i))){
+            if(!(godRoleMap.containsValue(i) || wolfGroup.contains(i) || wolfRoleMap.containsValue(i))){
                 villagers.add(i);
             }
         }
@@ -279,4 +287,41 @@ public class DataModel {
     }
 
     public boolean isFirstDay(){ return turn==1; }
+
+    public void initActionList(){
+
+        Log.d(TAG, "initActionList:" + villagers);
+
+        actionList.add(null);
+        for (int pos = 1 ; pos <= peoCnt ; pos++) {
+            Action posAction = null;
+            if(godRoleMap.containsValue(pos)){
+                for(Action action : godRoleMap.keySet()){
+                    if(godRoleMap.get(action) == pos){
+                        posAction = action;
+                        break;
+                    }
+                }
+            }
+
+            if(wolfRoleMap.containsValue(pos)){
+                for(Action action : wolfRoleMap.keySet()){
+                    if(wolfRoleMap.get(action) == pos){
+                        posAction = action;
+                        break;
+                    }
+                }
+            }
+
+            if(wolfGroup.contains(pos)){
+                posAction = Action.狼人;
+            }
+
+            if(villagers.contains(pos)){
+                posAction = Action.村民;
+            }
+
+            actionList.add(posAction);
+        }
+    }
 }

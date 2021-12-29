@@ -140,7 +140,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     }
 
     public void createSound() {
-        music = new SoundMgr(mContext);
+        music = SoundMgr.getInstance(mContext);
     }
 
     public void setTgBtn(ToggleButton[] tgBtnGroup) {
@@ -994,12 +994,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     public void notifyGameEnd(EndType endType) {
         Log.d(TAG, "遊戲結束");
         String endText = "遊戲結束 " + endType;
-        String endMessage = "";
-        HashMap<Action, Integer> godRoleMap = dataModel.getGodRoleMap();
-        for(Action act : godRoleMap.keySet()){
-            endMessage += "\n" + godRoleMap.get(act) + " . " + act;
+        StringBuilder sb = new StringBuilder();
+        List<Action> actionList = dataModel.getActionList();
+        for (int i = 1; i < actionList.size(); i++) {
+            sb.append("座位" + i + ": " + actionList.get(i) + "\n");
         }
-        gameActivityNotify.notifyGameEnd(endText, endMessage);
+        gameActivityNotify.notifyGameEnd(endText, sb.toString());
     }
 
     @Override

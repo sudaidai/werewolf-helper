@@ -15,6 +15,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class SoundMgr implements MediaPlayer.OnCompletionListener{
 
+    private static volatile SoundMgr instance;
+
     private static final String TAG = "Sound";
     private final Context mContext;
     public MediaPlayer mediaPlayer; //播放中
@@ -23,7 +25,19 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener{
     private HashMap<Integer, Integer> soundID = new HashMap<Integer, Integer>();
     private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(10);
 
-    public SoundMgr(Context context){
+
+    public static SoundMgr getInstance(Context context){
+        if(instance == null){
+            synchronized(SoundMgr.class){
+                if(instance == null){
+                    instance = new SoundMgr(context);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private SoundMgr(Context context){
         mContext = context;
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);

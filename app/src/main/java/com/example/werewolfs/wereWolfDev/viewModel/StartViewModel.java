@@ -1,5 +1,7 @@
 package com.example.werewolfs.wereWolfDev.viewModel;
 
-public class StartViewModel {
+import androidx.lifecycle.ViewModel;
+
+public class StartViewModel extends ViewModel {
 
 }

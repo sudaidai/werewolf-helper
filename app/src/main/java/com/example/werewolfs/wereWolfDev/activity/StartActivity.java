@@ -3,12 +3,11 @@ package com.example.werewolfs.wereWolfDev.activity;
  * 用途 : 遊戲開啟介面
  */
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.werewolfs.R;
 import com.example.werewolfs.databinding.ActivityStartBinding;
