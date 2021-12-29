@@ -9,10 +9,10 @@
 
         <variable
             name="viewModel"
-            type="com.example.werewolfs.wereWolfDev.viewModel.GameViewModel" />
+            type="com.wf.werewolfs.wereWolfDev.viewModel.GameViewModel" />
         <variable
             name="CBField"
-            type="com.example.werewolfs.wereWolfDev.viewModel.GameViewModel.CtrlBtnField" />
+            type="com.wf.werewolfs.wereWolfDev.viewModel.GameViewModel.CtrlBtnField" />
     </data>
 
 <RelativeLayout
