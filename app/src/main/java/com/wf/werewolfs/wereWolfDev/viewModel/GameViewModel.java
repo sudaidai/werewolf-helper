@@ -391,7 +391,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 closeYourEyes(idiot);
                 break;
             case 隱狼:
-                setSeat(hiddenWolf, seat, true);
+                setSeat(hiddenWolf, seat, false);
                 closeYourEyes(hiddenWolf);
                 break;
             case 禁言長老:

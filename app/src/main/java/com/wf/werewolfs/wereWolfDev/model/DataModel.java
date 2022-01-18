@@ -54,6 +54,7 @@ public class DataModel {
     private Action stage; //遊戲階段
     private int turn; //輪次
     private boolean gameEnd;
+    private boolean hiddenWolfShowed;
     private List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
     private List<Integer> dieList = new ArrayList<>(); //死亡名單
 
@@ -72,6 +73,7 @@ public class DataModel {
         stage = Action.準備開始;
         turn = 1;
         gameEnd = false;
+        hiddenWolfShowed = false;
         stageOrder.clear();
         dieList.clear();
         godRoleMap.clear();
@@ -230,8 +232,9 @@ public class DataModel {
      */
     public void playerDead(int seat) {
         dieList.add(seat);
-        if (dieList.containsAll(wolfGroup)) {
+        if (dieList.containsAll(wolfGroup) && !hiddenWolfShowed) {
             gameNotify.notifyShowHiddenWolf();
+            hiddenWolfShowed = true;
         }
         checkGameEnd();
     }
@@ -248,9 +251,14 @@ public class DataModel {
             }
         }
 
+        System.out.println(wolfDeadCnt);
+        System.out.println(wolfGroup.size());
+        System.out.println(wolfRoleMap.size());
+
         if (wolfDeadCnt == (wolfGroup.size() + wolfRoleMap.size())) {
             gameNotify.notifyGameEnd(EndType.好人勝利);
             gameEnd = true;
+            return;
         }
 
         if (gameEndRule) {
@@ -258,15 +266,18 @@ public class DataModel {
             if (godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()) {
                 gameNotify.notifyGameEnd(EndType.屠城);
                 gameEnd = true;
+                return;
             }
         } else {
             //屠邊
             if (dieList.containsAll(villagers)) {
                 gameNotify.notifyGameEnd(EndType.屠民);
                 gameEnd = true;
+                return;
             } else if (dieList.containsAll(godRoleMap.values())) {
                 gameNotify.notifyGameEnd(EndType.屠神);
                 gameEnd = true;
+                return;
             }
         }
     }
