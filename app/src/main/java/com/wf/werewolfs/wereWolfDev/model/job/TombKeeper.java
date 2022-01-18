@@ -15,7 +15,7 @@ public class TombKeeper extends Role {
     private int inGrave;
     private boolean identity; //true -> 好人 false -> 壞人
 
-    public TombKeeper(){
+    public TombKeeper() {
         inGrave = 0;
         stage = Action.守墓人;
         openSound = R.raw.tomb_open;
@@ -31,7 +31,7 @@ public class TombKeeper extends Role {
         DataModel dataModel = DataModel.getInstance();
         this.inGrave = inGrave;
         identity = !(dataModel.getWolfGroup().contains(inGrave) ||
-        dataModel.getWolfRoleMap().values().contains(inGrave));
+                dataModel.getWolfRoleMap().values().contains(inGrave));
     }
 
     public boolean identify() {

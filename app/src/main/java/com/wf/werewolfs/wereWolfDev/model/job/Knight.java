@@ -12,7 +12,7 @@ public class Knight extends Role {
      * ，馬上進入晚上。 如果不是，則騎士以死謝罪，當天的投票繼續。
      */
 
-    public Knight(){
+    public Knight() {
         stage = Action.騎士;
         openSound = R.raw.knight4;
         closeSound = R.raw.knight2;

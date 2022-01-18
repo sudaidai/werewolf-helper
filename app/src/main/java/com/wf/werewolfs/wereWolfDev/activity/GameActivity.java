@@ -1,7 +1,5 @@
 package com.wf.werewolfs.wereWolfDev.activity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,9 +14,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.wf.werewolfs.R;
 import com.wf.werewolfs.databinding.ActivityGameBinding;
-import com.wf.werewolfs.wereWolfDev.SoundMgr;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
-import com.wf.werewolfs.wereWolfDev.constant.Static;
 import com.wf.werewolfs.wereWolfDev.model.DataModel;
 import com.wf.werewolfs.wereWolfDev.model.Role;
 import com.wf.werewolfs.wereWolfDev.model.job.Seer;
@@ -26,17 +22,28 @@ import com.wf.werewolfs.wereWolfDev.model.job.TombKeeper;
 import com.wf.werewolfs.wereWolfDev.viewModel.GameViewModel;
 
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class GameActivity extends AppCompatActivity implements GameActivityNotify{
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
-    /** main class*/
+public class GameActivity extends AppCompatActivity implements GameActivityNotify {
+
+    /**
+     * main class
+     */
     private GameViewModel gameViewModel;
 
-    /** view*/
+    /**
+     * view
+     */
     private ToggleButton[] tgBtn = new ToggleButton[19];
 
-    /** auto-generating class*/
+    /**
+     * auto-generating class
+     */
     public ActivityGameBinding binding;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +64,11 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
 
         /** create toggleBtn by count of people*/
         int peoCnt = DataModel.getInstance().getPeoCnt();
-        for(int i=1 ; i <= peoCnt/2 ; i++){
+        for (int i = 1; i <= peoCnt / 2; i++) {
             top.addView(createToggleBtn(i));
         }
         //希望座位是順時鐘，下面的座位反序放入
-        for(int i=peoCnt ; i > peoCnt/2 ; i--){
+        for (int i = peoCnt; i > peoCnt / 2; i--) {
             bottom.addView(createToggleBtn(i));
         }
 
@@ -78,7 +85,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         gameViewModel.setTgBtn(tgBtn);
     }
 
-    private ToggleButton createToggleBtn(int pos){
+    private ToggleButton createToggleBtn(int pos) {
         tgBtn[pos] = new ToggleButton(this);
         tgBtn[pos].setId(pos);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -89,7 +96,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         return tgBtn[pos];
     }
 
-    public void tgBtnInit(ToggleButton tgBtn){
+    public void tgBtnInit(ToggleButton tgBtn) {
         tgBtn.setText(tgBtn.getId() + "");
         tgBtn.setTextOn(tgBtn.getId() + "");
         tgBtn.setTextOff(tgBtn.getId() + "");
@@ -101,7 +108,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
 
 
     @Override
-    public void notifyRepeatSelect(){
+    public void notifyRepeatSelect() {
         new AlertDialog.Builder(this).setCancelable(false)
                 .setIcon(R.drawable.ic_launcher_background)
                 .setTitle("身分重複")
@@ -114,7 +121,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
     }
 
     @Override
-    public void notifySeerAsk(boolean isWolf, int seat, Seer seer){
+    public void notifySeerAsk(boolean isWolf, int seat, Seer seer) {
         String seerMessage = "";
         ImageView iv = new ImageView(this);
         if (isWolf) {
@@ -135,7 +142,9 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         seerDialog.show();
 
         new CountDownTimer(5000, 1000) {
-            public void onTick(long millisUntilFinished) {}
+            public void onTick(long millisUntilFinished) {
+            }
+
             public void onFinish() {
                 seerDialog.cancel();
                 gameViewModel.closeYourEyes(seer);
@@ -177,7 +186,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setPositiveButton("投票", (dialog, which) -> {
                     gameViewModel.voteOn(seat);
                 }).setNegativeButton("QQ", (dialog, which) -> {
-                }).create().show();
+        }).create().show();
     }
 
     @Override
@@ -187,7 +196,6 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .setTitle(endTitle)
                 .setMessage(endMessage)
                 .setPositiveButton("ok", (dialog, which) -> {
-                    gameViewModel.initGameVariable(); //TODO 初始化
                     finish();
                 }).show();
     }
@@ -221,12 +229,14 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         seeThroughDialogue.show();
 
         new CountDownTimer(5000, 1000) {
-            public void onTick(long millisUntilFinished) {}
+            public void onTick(long millisUntilFinished) {
+            }
+
             public void onFinish() {
                 seeThroughDialogue.cancel();
-                if(role.stage == Action.石像鬼){
+                if (role.stage == Action.石像鬼) {
                     gameViewModel.gargoyleGetKnife();
-                }else{
+                } else {
                     gameViewModel.closeYourEyes(role);
                 }
             }
@@ -243,7 +253,9 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
                 .show();
 
         new CountDownTimer(5000, 1000) {
-            public void onTick(long millisUntilFinished) {}
+            public void onTick(long millisUntilFinished) {
+            }
+
             public void onFinish() {
                 tombDialogue.cancel();
                 gameViewModel.closeYourEyes(tombKeeper);

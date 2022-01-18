@@ -11,7 +11,7 @@ public class Idiot extends Role {
      * ，但不能投票，狼人仍需要擊殺他才能讓他死亡。
      */
 
-    public Idiot(){
+    public Idiot() {
         stage = Action.白癡;
         openSound = R.raw.idiot_open;
         closeSound = R.raw.idiot_close;

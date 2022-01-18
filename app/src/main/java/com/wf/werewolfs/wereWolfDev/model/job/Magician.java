@@ -19,7 +19,7 @@ public class Magician extends Role {
     private int seat1;
     private int seat2;
 
-    public Magician(){
+    public Magician() {
         stage = Action.魔術師;
         seat1 = 0;
         seat2 = 0;
@@ -29,7 +29,7 @@ public class Magician extends Role {
         unchangeable = new ArrayList<>();
     }
 
-    public void magic(int seat1, int seat2){
+    public void magic(int seat1, int seat2) {
         this.seat1 = seat1;
         this.seat2 = seat2;
         unchangeable.add(seat1);

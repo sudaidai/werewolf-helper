@@ -11,13 +11,13 @@ public class Hunter extends Role {
      * ，每晚法官會告訴你技能是否還在???。
      */
 
-    public Hunter(){
+    public Hunter() {
         stage = Action.獵人;
         openSound = R.raw.hunter4;
         closeSound = R.raw.hunter2;
     }
 
-    public boolean activeSkill(){
+    public boolean activeSkill() {
         return true;
     }
 }

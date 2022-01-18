@@ -169,7 +169,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     closeYourEyes(seer);
                     break;
                 case 守衛:
-                    if(guard.getSeat() == 0) {
+                    if (guard.getSeat() == 0) {
                         //避免守衛未確認身分按空守
                         return;
                     }
@@ -271,25 +271,25 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 禁言長老:
                 choosePosition(seat);
-                if(forbiddenElder.unChecked()){
+                if (forbiddenElder.unChecked()) {
                     setColorAndTextOn(tgBtn, "禁言長老", Color.BLUE);
-                }else{
+                } else {
                     setColorAndTextOn(tgBtn, "禁言", Color.GRAY);
                 }
                 break;
             case 狼美人:
                 choosePosition(seat);
-                if(prettyWolf.unChecked()){
+                if (prettyWolf.unChecked()) {
                     setColorAndTextOn(tgBtn, "狼美人", Color.BLUE);
-                }else{
+                } else {
                     setColorAndTextOn(tgBtn, "魅惑", Color.MAGENTA);
                 }
                 break;
             case 石像鬼2:
                 choosePosition(seat);
-                if(knifeOnTheGround){
+                if (knifeOnTheGround) {
                     setColorAndTextOn(tgBtn, "擊殺", Color.RED);
-                }else{
+                } else {
                     setColorAndTextOn(tgBtn, "看透", Color.GRAY);
                 }
                 break;
@@ -314,7 +314,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private void unCheckedEvent(int seat, Action stage) {
 
         if (stage != Action.狼人) {
-            if(seat != selected){
+            if (seat != selected) {
                 return;
             }
         }
@@ -326,7 +326,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 seatsSelected.remove(new Integer(seat));
                 break;
             case 殺人:
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     tgBtnGroup[wolves.getKnifeOn()].setClickable(true); //同刀的座位鎖定解除
                 }
                 wolves.kill(seat);
@@ -354,7 +354,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 if (seer.unChecked()) {
                     useYourSkill(seer, seat, true);
                 } else {
-                    boolean isWolf = seer.isWolf(seat);
+                    boolean isWolf = seer.see(seat);
                     gameActivityNotify.notifySeerAsk(isWolf, seat, seer);
                 }
                 break;
@@ -391,7 +391,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 closeYourEyes(idiot);
                 break;
             case 隱狼:
-                setSeat(hiddenWolf, seat, false);
+                setSeat(hiddenWolf, seat, true);
                 closeYourEyes(hiddenWolf);
                 break;
             case 禁言長老:
@@ -407,12 +407,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 }
                 break;
             case 狼美人:
-                if(prettyWolf.unChecked()){
+                if (prettyWolf.unChecked()) {
                     useYourSkill(prettyWolf, seat, false);
-                    dataModel.getWolfGroup().add(seat); //為預言家查殺對象
                     ctrlBtnField.text.set("空綁");
                     ctrlBtnField.clickable.set(true);
-                }else{
+                } else {
                     prettyWolf.charm(seat);
                     ctrlBtnField.text.set("夜晚");
                     ctrlBtnField.clickable.set(false);
@@ -425,10 +424,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 closeYourEyes(gargoyle);
                 break;
             case 石像鬼2:
-                if(knifeOnTheGround){
+                if (knifeOnTheGround) {
                     wolves.kill(seat);
                     dataModel.setNextStage();
-                }else{
+                } else {
                     identity = gargoyle.seeThrough(seat);
                     gameActivityNotify.notifySeeThrough(identity, seat, gargoyle);
                 }
@@ -648,21 +647,21 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         Action stage = role.stage;
         announcement.set(stage + "請使用技能");
         music.playSound(role.skillSound);
-        if(isGod){
+        if (isGod) {
             dataModel.getGodRoleMap().put(stage, seat);
-        }else{
+        } else {
             dataModel.getWolfRoleMap().put(stage, seat);
         }
         role.setSeat(seat);
         Log.d(TAG, stage + "為 : " + seat + "號玩家");
     }
 
-    private void setSeat(Role role, int seat, boolean isGod){
+    private void setSeat(Role role, int seat, boolean isGod) {
         repeatSelectionCheck(seat);
         Action stage = role.stage;
-        if(isGod){
+        if (isGod) {
             dataModel.getGodRoleMap().put(stage, seat);
-        }else{
+        } else {
             dataModel.getWolfRoleMap().put(stage, seat);
         }
         role.setSeat(seat);
@@ -679,12 +678,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 每天晚上，石像鬼都想要跟上帝要刀子
      */
-    public void gargoyleGetKnife(){
-        if(dataModel.wolvesDead()){
+    public void gargoyleGetKnife() {
+        if (dataModel.wolvesDead()) {
             // 刀子在地上 石像鬼撿起來
             knifeOnTheGround = true;
             announcement.set("雙擊殺人");
-        }else {
+        } else {
             //上帝不給他 叫他閉上眼滾開
             closeYourEyes(gargoyle);
         }
@@ -692,14 +691,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     /**
      * 第一天獲取發言順序(警長競選)
+     *
      * @return
      */
-    private int getSpeakOrder(){
+    private int getSpeakOrder() {
         SimpleDateFormat sdf = new SimpleDateFormat("mm");
         Date now = new Date(System.currentTimeMillis());
         int min = Integer.parseInt(sdf.format(now));
         int speakOrder = (min % (dataModel.getPeoCnt())) + 1;
-        if(random() < 0.5){
+        if (random() < 0.5) {
             speakOrder = -speakOrder;
         }
         return speakOrder;
@@ -707,19 +707,20 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     /**
      * 根據昨晚死亡玩家選定對話文字
+     *
      * @param dieList
      * @return
      */
-    public String checkDieList(List<Integer> dieList){
-        String text="";
-        if(dieList.size() > 0){
+    public String checkDieList(List<Integer> dieList) {
+        String text = "";
+        if (dieList.size() > 0) {
             text = "昨晚死亡玩家為 : " + dieList;
-        }else{
+        } else {
             int speakOrder = getSpeakOrder();
             String str;
-            if(speakOrder > 0){
+            if (speakOrder > 0) {
                 str = "順序";
-            }else{
+            } else {
                 str = "逆序";
                 speakOrder = -speakOrder;
             }
@@ -728,23 +729,27 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         return text;
     }
 
-    /** 白天投票*/
-    public void voteOn(int seat){
+    /**
+     * 白天投票
+     */
+    public void voteOn(int seat) {
         dataModel.playerDead(seat);
-        if(seat == prettyWolf.getSeat()){
+        if (seat == prettyWolf.getSeat()) {
             //如果投了狼美人出去
             int lover = prettyWolf.getLover();
             gameActivityNotify.notifyPrettyWolfDead(lover);
             dataModel.playerDead(lover);
         }
-        if(!tombKeeper.unChecked()){
+        if (!tombKeeper.unChecked()) {
             tombKeeper.bury(seat);
         }
         initSeatState();
     }
 
-    /** 計時後天亮*/
-    private void dayBreak(List<Integer> dieList_today, int turn){
+    /**
+     * 計時後天亮
+     */
+    private void dayBreak(List<Integer> dieList_today, int turn) {
         music.playSound(R.raw.daybreak);
         announcement.set("點此進入下一晚->");
         ctrlBtnField.background.set(false);
@@ -753,16 +758,16 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         ctrlBtnField.clickable.set(true);
         setAllTgBtnStyle();
 
-        if(!forbiddenElder.unChecked()){
+        if (!forbiddenElder.unChecked()) {
             int muted = forbiddenElder.getMuted();
-            if(muted != 0){
+            if (muted != 0) {
                 tgBtnGroup[muted].setText("禁言");
             }
         }
 
-        if(turn == 1){
+        if (turn == 1) {
             gameActivityNotify.notifyFirstDaybreak(message, dieList_today);
-        }else {
+        } else {
             gameActivityNotify.notifyDaybreak(message);
             initSeatState();
         }
@@ -774,25 +779,25 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             case 狼人:
                 announcement.set("狼人請睜眼");
                 music.playSound(R.raw.wolf_open);
-                if(dataModel.hasStage(Action.狼美人)){
+                if (dataModel.hasStage(Action.狼美人)) {
                     //如果有狼美人 請狼人睜眼之後 也請狼美人睜眼 -> stage 為 Action.狼美人
                     announcement.set(Action.狼美人 + "請睜眼");
                     music.playSound(prettyWolf.openSound);
                 }
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     //第一輪之後狼人不用確認身分 播放聲音後跳到殺人
                     dataModel.setNextStage();
                 }
                 break;
             case 殺人:
                 music.playSound(R.raw.wolf_kill);
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
                 }
-                if(dataModel.wolvesDead()){
+                if (dataModel.wolvesDead()) {
                     setAllSeatState(false);
                     skipStage();
-                }else{
+                } else {
                     announcement.set("雙擊殺人");
                 }
                 break;
@@ -819,26 +824,28 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                             tgBtnGroup[knifeOn].setBackgroundColor(Color.RED);
                         }
 
-                        if(!witch.hasMedicine()){
+                        if (!witch.hasMedicine()) {
                             announcement.set("沒藥了點自己");
                         }
                     }
                 } else {
                     stageDelay(stage, witch);
-                }break;
+                }
+                break;
             case 預言家:
                 openYourEyes(seer);
                 break;
             case 守衛:
                 openYourEyes(guard);
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     ctrlBtnField.text.set("空守");
                     ctrlBtnField.clickable.set(true);
                 }
                 //守衛不能同守 鎖定座位
                 if (guard.getIsProtected() != 0) {
                     tgBtnGroup[guard.getIsProtected()].setClickable(false);
-                }break;
+                }
+                break;
             case 獵人:
                 openYourEyes(hunter);
                 break;
@@ -856,7 +863,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 gameActivityNotify.notifyWolfFriend(dataModel.getWolfGroup());
                 break;
             case 禁言長老:
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     ctrlBtnField.text.set("空禁");
                     ctrlBtnField.clickable.set(true);
                 }
@@ -867,7 +874,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 if (dataModel.getDieList().contains(prettyWolf.getSeat())) {
                     skipStage();
                     setAllSeatState(false);
-                } else if(!dataModel.isFirstDay()) {
+                } else if (!dataModel.isFirstDay()) {
                     music.playSound(prettyWolf.skillSound);
                     ctrlBtnField.clickable.set(true);
                     ctrlBtnField.text.set("空綁");
@@ -884,7 +891,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 守墓人:
                 openYourEyes(tombKeeper);
-                if(!dataModel.isFirstDay()){
+                if (!dataModel.isFirstDay()) {
                     setAllSeatState(false);
                     gameActivityNotify.notifyInGrave(tombKeeper.identify(), tombKeeper);
                 }
@@ -903,9 +910,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         ctrlBtnField.clickable.set(false);
         setAllSeatState(true);
         setAllTgBtnStyle();
-        if(!forbiddenElder.unChecked()){
+        if (!forbiddenElder.unChecked()) {
             int muted = forbiddenElder.getMuted();
-            if(forbiddenElder.getMuted() != 0){
+            if (forbiddenElder.getMuted() != 0) {
                 tgBtnGroup[muted].setText(muted + "");
                 forbiddenElder.setMuted(0);
             }
@@ -915,7 +922,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     }
 
     @Override
-    public void notifyNightEnd(){
+    public void notifyNightEnd() {
         message = "";
         List<Integer> dieList_today = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
         List<Integer> dieList = dataModel.getDieList();
@@ -928,18 +935,26 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
          * 3.被女巫毒
          */
         int knifeOn = wolves.getKnifeOn();
-        if((knifeOn != witch.getIsSave())
-         || witch.getIsSave() == guard.getIsProtected()
-         && knifeOn != guard.getIsProtected()){
-            dataModel.playerDead(knifeOn);
-            dieList_today.add(knifeOn);
+
+        boolean knifeOnGone = false;
+        if (knifeOn != witch.getIsSave() && knifeOn != guard.getIsProtected()) {
+            // 1.被狼人刀 -> 女巫不救 且 守衛非守
+            knifeOnGone = true;
+        } else if (knifeOn == witch.getIsSave() && knifeOn == guard.getIsProtected()) {
+            // 2.被狼人刀 -> 被女巫救 -> 被守衛守
+            knifeOnGone = true;
             witch.setIsSave(0);
         }
 
+        if (knifeOnGone) {
+            dataModel.playerDead(knifeOn);
+            dieList_today.add(knifeOn);
+        }
+
         int isPoisoned = witch.getIsPoisoned();
-        if(isPoisoned != 0){
-            //女巫有投毒
-            if(!dieList_today.contains(isPoisoned)){
+        if (isPoisoned != 0) {
+            // 3.被女巫毒
+            if (!dieList_today.contains(isPoisoned)) {
                 //被毒的人未死，加入死亡名單
                 dataModel.playerDead(isPoisoned);
                 dieList_today.add(isPoisoned);
@@ -950,38 +965,38 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         Collections.sort(dieList_today);
         Log.d(TAG, "dieList(today) -> " + dieList_today);
 
-        if(turn == 1){
+        if (turn == 1) {
             int speakOrder = getSpeakOrder();
             String str;
-            if(speakOrder > 0){
+            if (speakOrder > 0) {
                 str = "順序";
-            }else{
+            } else {
                 str = "逆序";
                 speakOrder = -speakOrder;
             }
             message = "競選警長階段\n根據現在時間由" + speakOrder + "號玩家\"" + str + "\"開始發言";
-        }else{
+        } else {
             message = checkDieList(dieList_today);
         }
 
-        if(!bear.unChecked() && bear.isAlive){
+        if (!bear.unChecked() && bear.isAlive) {
             boolean roar = bear.roar();
-            if(roar){
+            if (roar) {
                 music.playSound(bear.skillSound);
                 message += ", 熊叫了！(╬ﾟдﾟ)";
-            }else{
+            } else {
                 message += ", 熊沒有叫( ˘•ω•˘ )！";
             }
-            if(dieList.contains(bear.getSeat())){
+            if (dieList.contains(bear.getSeat())) {
                 message += ", 熊不再吼叫(´;ω;`)";
                 bear.killed();
             }
         }
 
-        new CountDownTimer(5000, 1000){
+        new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                announcement.set(String.valueOf(millisUntilFinished/1000));
+                announcement.set(String.valueOf(millisUntilFinished / 1000));
             }
 
             @Override
@@ -1001,13 +1016,17 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         for (int i = 1; i < actionList.size(); i++) {
             sb.append("座位" + i + ": " + actionList.get(i) + "\n");
         }
+
+        // 不需要DataModel的資源了 初始化
+        dataModel.initGameVariable();
         gameActivityNotify.notifyGameEnd(endText, sb.toString());
     }
 
     @Override
     public void notifyShowHiddenWolf() {
         int seat = hiddenWolf.getSeat();
-        if(seat != 0){
+        if (seat != 0) {
+            dataModel.getWolfRoleMap().remove(Action.隱狼);
             dataModel.getWolfGroup().add(seat);
         }
     }

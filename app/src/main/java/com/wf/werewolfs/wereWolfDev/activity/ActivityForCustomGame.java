@@ -9,6 +9,7 @@ import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+
 import com.wf.werewolfs.R;
 import com.wf.werewolfs.databinding.ActivityForCustomGameBinding;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
@@ -20,7 +21,9 @@ import java.util.LinkedHashMap;
 
 public class ActivityForCustomGame extends AppCompatActivity {
 
-    /** auto-generating class*/
+    /**
+     * auto-generating class
+     */
     public ActivityForCustomGameBinding binding;
 
     private DataModel dataModel = DataModel.getInstance();
@@ -37,20 +40,20 @@ public class ActivityForCustomGame extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_for_custom_game);
         binding.btnReturn.setOnClickListener(view -> finish());
         binding.btnAddWolf.setOnClickListener(view -> {
-            if(wolf_cnt_temp > 2) {
+            if (wolf_cnt_temp > 2) {
                 wolf_cnt_temp += 1;
                 binding.textWolfCounts.setText(wolf_cnt_temp + "");
             }
         });
 
         binding.btnReduceWolf.setOnClickListener(view -> {
-            if(wolf_cnt_temp > 2) {
+            if (wolf_cnt_temp > 2) {
                 wolf_cnt_temp -= 1;
                 binding.textWolfCounts.setText(wolf_cnt_temp + "");
             }
         });
 
-        binding.btnStart.setOnClickListener(view ->{
+        binding.btnStart.setOnClickListener(view -> {
             dataModel.setWolfCnt(wolf_cnt_temp);
             setRole();
             setRule();
@@ -58,34 +61,34 @@ public class ActivityForCustomGame extends AppCompatActivity {
             startActivity(it);
         });
 
-        binding.witchSwitch.setOnCheckedChangeListener((view, isChecked) ->{
-            if(isChecked){
+        binding.witchSwitch.setOnCheckedChangeListener((view, isChecked) -> {
+            if (isChecked) {
                 binding.witchSwitch.setText("女巫【可以】自救");
-            }else{
+            } else {
                 binding.witchSwitch.setText("女巫【不可】自救");
             }
         });
 
-        binding.killSwitch.setOnCheckedChangeListener((view, isChecked)->{
-            if(isChecked){
+        binding.killSwitch.setOnCheckedChangeListener((view, isChecked) -> {
+            if (isChecked) {
                 binding.killSwitch.setText("採取【屠城】規則");
-            }else{
+            } else {
                 binding.killSwitch.setText("採取【屠邊】規則");
             }
         });
 
-        binding.prettyWolfSwitch.setOnCheckedChangeListener((view, isChecked)->{
-            if(isChecked){
+        binding.prettyWolfSwitch.setOnCheckedChangeListener((view, isChecked) -> {
+            if (isChecked) {
                 binding.prettyWolfSwitch.setText("狼美人夜晚死亡【可以】發動技能");
-            }else{
+            } else {
                 binding.prettyWolfSwitch.setText("狼美人夜晚死亡【不可】發動技能");
             }
         });
 
-        binding.idiotDoubleKillSwitch.setOnCheckedChangeListener((view, isChecked)->{
-            if(isChecked){
+        binding.idiotDoubleKillSwitch.setOnCheckedChangeListener((view, isChecked) -> {
+            if (isChecked) {
                 binding.idiotDoubleKillSwitch.setText("白癡【有】雙面刀");
-            }else{
+            } else {
                 binding.idiotDoubleKillSwitch.setText("白癡【沒有】雙面刀");
             }
         });
@@ -110,7 +113,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         setTextTotalCount(peoCntChose);
     }
 
-    private void initValue(){
+    private void initValue() {
         wolf_cnt_temp = 4;
         peoCntChose = 0;
     }
@@ -122,7 +125,7 @@ public class ActivityForCustomGame extends AppCompatActivity {
         dataModel.setHunterKillRule(binding.hunterDoubleKillSwitch.isChecked());
     }
 
-    private void setRole(){
+    private void setRole() {
         LinkedHashMap<Action, Boolean> role_map = dataModel.getRoleMap();
         role_map.put(Action.隱狼, binding.hiddenWolf.isChecked());
         role_map.put(Action.狼美人, binding.prettyWolf.isChecked());
@@ -149,15 +152,15 @@ public class ActivityForCustomGame extends AppCompatActivity {
         role_map.put(Action.石像鬼2, binding.gargoyle.isChecked());
     }
 
-    private void setTextTotalCount(int peoCntChose){
+    private void setTextTotalCount(int peoCntChose) {
         binding.totalCount.setText("已選擇 : " + peoCntChose + " / " + dataModel.getPeoCnt());
     }
 
     private CompoundButton.OnCheckedChangeListener characterListener = (buttonView, isChecked) ->
     {
-        if(isChecked){
+        if (isChecked) {
             peoCntChose += 1;
-        }else{
+        } else {
             peoCntChose -= 1;
         }
         setTextTotalCount(peoCntChose);

@@ -18,15 +18,15 @@ public class Role {
         this.seat = seat;
     }
 
-    public boolean unChecked(){
+    public boolean unChecked() {
         return seat == 0;
     }
 
-    public void killed(){
+    public void killed() {
         isAlive = false;
     }
 
-    public boolean activeSkill(){
+    public boolean activeSkill() {
         return false;
     }
 }

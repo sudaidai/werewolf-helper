@@ -27,19 +27,29 @@ public class DataModel {
         return instance;
     }
 
-    /** 狼人數量*/
+    /**
+     * 狼人數量
+     */
     private int wolfCnt;
-    /** 總人數*/
+    /**
+     * 總人數
+     */
     private int peoCnt;
-    /** 腳色有無*/
+    /**
+     * 腳色有無
+     */
     private LinkedHashMap<Action, Boolean> roleMap = new LinkedHashMap<>();
-    /** 遊戲規則*/
+    /**
+     * 遊戲規則
+     */
     private boolean witchSaveRule; // True: 女巫第一晚可自救
     private boolean gameEndRule; // True: 屠城 False: 屠邊
     private boolean prettyWolfRule; // True: 狼美夜晚死亡可發動技能
     private boolean hunterKillRule; // True: 獵人有雙面刃
 
-    /** 遊戲中參數*/
+    /**
+     * 遊戲中參數
+     */
     private boolean isDay; //日夜
     private Action stage; //遊戲階段
     private int turn; //輪次
@@ -74,14 +84,14 @@ public class DataModel {
         stageOrder.add(Action.狼人);
         stageOrder.add(Action.殺人);
 
-        for(Action act : roleMap.keySet()){
-            if(roleMap.get(act)){
+        for (Action act : roleMap.keySet()) {
+            if (roleMap.get(act)) {
                 stageOrder.add(act);
             }
         }
         stageOrder.add(Action.白天);
 
-        Log.d("DataModel ->" ,"stageOrder:" + stageOrder);
+        Log.d("DataModel ->", "stageOrder:" + stageOrder);
     }
 
     public List<Action> getActionList() {
@@ -142,19 +152,18 @@ public class DataModel {
     }
 
 
-
     public boolean isDay() {
         return isDay;
     }
 
-    public void dayEnd(){
+    public void dayEnd() {
         isDay = false;
         gameNotify.notifyDayEnd();
     }
 
-    public void nightEnd(){
+    public void nightEnd() {
         isDay = true;
-        if(turn == 1){
+        if (turn == 1) {
             addVillagers();
             initActionList();
         }
@@ -175,8 +184,8 @@ public class DataModel {
         for (int i = 0; i < stageOrder.size(); i++) {
             if (stageOrder.get(i) == stage) {
                 if (i + 1 < stageOrder.size()) {
-                    if(turn != 1 && stageOrder.get(i+1).isPassive()){
-                        stage = stageOrder.get(i+1);
+                    if (turn != 1 && stageOrder.get(i + 1).isPassive()) {
+                        stage = stageOrder.get(i + 1);
                         continue;
                     }
                     return stageOrder.get(i + 1);
@@ -189,14 +198,13 @@ public class DataModel {
         return Action.白天;
     }
 
-    private void addVillagers(){
-        for(int i=1 ; i<=peoCnt ; i++){
-            if(!(godRoleMap.containsValue(i) || wolfGroup.contains(i) || wolfRoleMap.containsValue(i))){
+    private void addVillagers() {
+        for (int i = 1; i <= peoCnt; i++) {
+            if (!(godRoleMap.containsValue(i) || wolfGroup.contains(i) || wolfRoleMap.containsValue(i))) {
                 villagers.add(i);
             }
         }
     }
-
 
 
     public int getTurn() {
@@ -217,107 +225,113 @@ public class DataModel {
 
     /**
      * 獲知玩家死亡，加入死亡名單
+     *
      * @param seat
      */
-    public void playerDead(int seat){
+    public void playerDead(int seat) {
         dieList.add(seat);
-        if(dieList.containsAll(wolfGroup)){
+        if (dieList.containsAll(wolfGroup)) {
             gameNotify.notifyShowHiddenWolf();
         }
         checkGameEnd();
     }
 
     private void checkGameEnd() {
-        if(gameEnd){
+        if (gameEnd) {
             return;
         }
         int wolfDeadCnt = 0;
-        for(int seat : dieList){
+        for (int seat : dieList) {
             //算出死亡的狼的數量
-            if(wolfGroup.contains(seat) || wolfRoleMap.containsValue(seat)){
+            if (wolfGroup.contains(seat) || wolfRoleMap.containsValue(seat)) {
                 wolfDeadCnt += 1;
             }
         }
-        if(wolfDeadCnt == wolfGroup.size() + wolfRoleMap.size()) {
+
+        if (wolfDeadCnt == (wolfGroup.size() + wolfRoleMap.size())) {
             gameNotify.notifyGameEnd(EndType.好人勝利);
             gameEnd = true;
         }
 
-        if(gameEndRule){
+        if (gameEndRule) {
             //屠城 除了狼 沒人活著
-            if(godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()){
+            if (godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()) {
                 gameNotify.notifyGameEnd(EndType.屠城);
                 gameEnd = true;
             }
-        }else{
+        } else {
             //屠邊
-            if(dieList.containsAll(villagers)){
+            if (dieList.containsAll(villagers)) {
                 gameNotify.notifyGameEnd(EndType.屠民);
                 gameEnd = true;
-            }else if(dieList.containsAll(godRoleMap.values())){
+            } else if (dieList.containsAll(godRoleMap.values())) {
                 gameNotify.notifyGameEnd(EndType.屠神);
                 gameEnd = true;
             }
         }
     }
 
-    public List<Integer> getWolfGroup(){
+    public List<Integer> getWolfGroup() {
         return wolfGroup;
     }
 
-    public HashMap<Action, Integer> getWolfRoleMap(){
+    public HashMap<Action, Integer> getWolfRoleMap() {
         return wolfRoleMap;
     }
 
     /**
      * 判斷這場遊戲有沒有這個階段
+     *
      * @param stage
      * @return
      */
-    public boolean hasStage(Action stage){
+    public boolean hasStage(Action stage) {
         return stageOrder.contains(stage);
     }
 
     /**
      * 判斷是不是狼人死光了，刀子在地上
+     *
      * @return
      */
-    public boolean wolvesDead(){
+    public boolean wolvesDead() {
         return dieList.containsAll(wolfGroup);
     }
 
-    public boolean isFirstDay(){ return turn==1; }
+    public boolean isFirstDay() {
+        return turn == 1;
+    }
 
-    public void initActionList(){
+    public void initActionList() {
 
         Log.d(TAG, "initActionList:" + villagers);
 
         actionList.add(null);
-        for (int pos = 1 ; pos <= peoCnt ; pos++) {
+        for (int pos = 1; pos <= peoCnt; pos++) {
             Action posAction = null;
-            if(godRoleMap.containsValue(pos)){
-                for(Action action : godRoleMap.keySet()){
-                    if(godRoleMap.get(action) == pos){
+            if (godRoleMap.containsValue(pos)) {
+                for (Action action : godRoleMap.keySet()) {
+                    if (godRoleMap.get(action) == pos) {
                         posAction = action;
                         break;
                     }
                 }
             }
 
-            if(wolfRoleMap.containsValue(pos)){
-                for(Action action : wolfRoleMap.keySet()){
-                    if(wolfRoleMap.get(action) == pos){
+            if (wolfRoleMap.containsValue(pos)) {
+                for (Action action : wolfRoleMap.keySet()) {
+                    if (wolfRoleMap.get(action) == pos) {
                         posAction = action;
                         break;
                     }
                 }
             }
 
-            if(wolfGroup.contains(pos)){
+            if (wolfGroup.contains(pos)) {
                 posAction = Action.狼人;
             }
 
-            if(villagers.contains(pos)){
+            if (villagers.contains(pos)) {
                 posAction = Action.村民;
             }
 

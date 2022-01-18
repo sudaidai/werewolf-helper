@@ -19,7 +19,7 @@ public class Witch extends Role {
     private int isSaved;
     private int isPoisoned;
 
-    public Witch(){
+    public Witch() {
         stage = Action.女巫;
         hasHerbal = true;
         hasPoison = true;
@@ -30,22 +30,22 @@ public class Witch extends Role {
         closeSound = R.raw.witch_close;
     }
 
-    public void useHerbal(int seat){
-        if(hasHerbal){
+    public void useHerbal(int seat) {
+        if (hasHerbal) {
             isSaved = seat;
             hasHerbal = false;
         }
     }
 
-    public void usePoison(int seat){
-        if(hasPoison){
+    public void usePoison(int seat) {
+        if (hasPoison) {
             isPoisoned = seat;
             hasPoison = false;
         }
     }
 
-    public boolean hasMedicine(){
-        if(!hasHerbal && !hasPoison){
+    public boolean hasMedicine() {
+        if (!hasHerbal && !hasPoison) {
             return false;
         }
         return true;

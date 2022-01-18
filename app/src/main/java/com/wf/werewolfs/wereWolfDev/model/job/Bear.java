@@ -15,7 +15,7 @@ public class Bear extends Role {
      * 如果沒有咆哮則證明熊牌左右兩邊都是好人牌。
      */
 
-    public Bear(){
+    public Bear() {
         stage = Action.熊;
         openSound = R.raw.bear_open;
         closeSound = R.raw.bear_close;
@@ -23,31 +23,36 @@ public class Bear extends Role {
     }
 
     /**
-     *@return 當天早上是否會吼叫
+     * @return 當天早上是否會吼叫
      */
-    public boolean roar(){
+    public boolean roar() {
         DataModel dataModel = DataModel.getInstance();
         int seat = getSeat();
         int peo_cnt = dataModel.getPeoCnt();
         List<Integer> dieList = dataModel.getDieList();
         List<Integer> wolfGroup = dataModel.getWolfGroup();
         int right = seat, left = seat;
-        do{
+        do {
             left = (left - 1) % peo_cnt;
-            if(left == 0) { left = peo_cnt; }
-        }while(dieList.contains(left));
+            if (left == 0) {
+                left = peo_cnt;
+            }
+        } while (dieList.contains(left));
 
-        if(wolfGroup.contains(left)){
+        if (wolfGroup.contains(left)) {
             return true;
         }
-        do{
-            right = (right + 1) % peo_cnt;
-            if(right == 0) { right = 1; }
-        }while(dieList.contains(right));
 
-        if(wolfGroup.contains(right)){
+        do {
+            right = (right + 1) % peo_cnt;
+            if (right == 0) {
+                right = 1;
+            }
+        } while (dieList.contains(right));
+
+        if (wolfGroup.contains(right)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

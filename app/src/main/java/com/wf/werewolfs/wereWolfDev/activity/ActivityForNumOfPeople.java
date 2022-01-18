@@ -1,5 +1,8 @@
 package com.wf.werewolfs.wereWolfDev.activity;
-/** 用途 : 一般遊戲選擇人數*/
+/**
+ * 用途 : 一般遊戲選擇人數
+ */
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -18,8 +21,8 @@ public class ActivityForNumOfPeople extends AppCompatActivity {
 
     NumOfPeopleViewModel viewModel;
 
-    private TextView tv_show ;
-    private int countPe = 10 ;
+    private TextView tv_show;
+    private int countPe = 10;
     Button btn_next;
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -31,31 +34,31 @@ public class ActivityForNumOfPeople extends AppCompatActivity {
 
         viewModel = new NumOfPeopleViewModel();
         Button btn_b = findViewById(R.id.btn_b);
-        btn_b.setOnClickListener(new View.OnClickListener(){
+        btn_b.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 finish();
             }
         });
         tv_show = findViewById(R.id.tv_show);
 
         Button btn_down = findViewById(R.id.btn_down);
-        btn_down.setOnClickListener(new View.OnClickListener(){
+        btn_down.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onClick(View view){
-                if(countPe > 5) {
+            public void onClick(View view) {
+                if (countPe > 5) {
                     countPe = countPe - 1;
                     tv_show.setText("" + (countPe));
                 }
             }
         });
         Button btn_up = findViewById(R.id.btn_up);
-        btn_up.setOnClickListener(new View.OnClickListener(){
+        btn_up.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onClick(View view){
-                if(countPe < 18) {
+            public void onClick(View view) {
+                if (countPe < 18) {
                     countPe = countPe + 1;
                     tv_show.setText("" + (countPe));
                 }
@@ -64,7 +67,7 @@ public class ActivityForNumOfPeople extends AppCompatActivity {
         btn_next = findViewById(R.id.btn_next);
     }
 
-    public void onNextChoose(View v){
+    public void onNextChoose(View v) {
         viewModel.setPeoCnt(countPe);
         Intent it = new Intent(this, ActivityForCustomGame.class);
         startActivity(it);

@@ -11,7 +11,7 @@ public class HiddenWolf extends Role {
      * (不會進入wolf group, 會被放入wolf role group, 查驗與熊都是判斷wolf group)
      */
 
-    public HiddenWolf(){
+    public HiddenWolf() {
         stage = Action.隱狼;
         openSound = R.raw.hidden_open;
         closeSound = R.raw.hidden_close;

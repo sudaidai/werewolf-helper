@@ -12,7 +12,7 @@ public class Guard extends Role {
 
     private int isProtected;
 
-    public Guard(){
+    public Guard() {
         isProtected = 0;
         stage = Action.守衛;
         openSound = R.raw.guard_open;
@@ -20,11 +20,11 @@ public class Guard extends Role {
         closeSound = R.raw.guard_close;
     }
 
-    public void protect(int seat){
+    public void protect(int seat) {
         isProtected = seat;
     }
 
-    public int getIsProtected(){
+    public int getIsProtected() {
         return isProtected;
     }
 }

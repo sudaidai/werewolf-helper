@@ -19,31 +19,31 @@ public class Gargoyle extends Role {
 
     private static final String TAG = "Gargoyle";
 
-    public Gargoyle(){
+    public Gargoyle() {
         stage = Action.石像鬼;
         openSound = R.raw.ghost_open;
         closeSound = R.raw.ghost_close;
         skillSound = R.raw.ghost_skill;
     }
 
-    public Action seeThrough(int seat){
+    public Action seeThrough(int seat) {
         Log.d(TAG, "seeThrough: " + seat);
         DataModel dataModel = DataModel.getInstance();
         HashMap<Action, Integer> tempRoleMap = dataModel.getGodRoleMap();
-        for(Action stage : tempRoleMap.keySet()){
-            if(tempRoleMap.get(stage) == seat){
+        for (Action stage : tempRoleMap.keySet()) {
+            if (tempRoleMap.get(stage) == seat) {
                 return stage;
             }
         }
         tempRoleMap = dataModel.getWolfRoleMap();
-        for(Action stage : tempRoleMap.keySet()){
-            if(tempRoleMap.get(stage) == seat){
+        for (Action stage : tempRoleMap.keySet()) {
+            if (tempRoleMap.get(stage) == seat) {
                 return stage;
             }
         }
 
-        for(int s : dataModel.getWolfGroup()){
-            if(seat == s){
+        for (int s : dataModel.getWolfGroup()) {
+            if (seat == s) {
                 return Action.狼人;
             }
         }
