@@ -3,7 +3,6 @@ package com.wf.werewolfs.wereWolfDev.viewModel;
 import static java.lang.Math.random;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -31,7 +30,6 @@ import com.wf.werewolfs.wereWolfDev.model.job.HiddenWolf;
 import com.wf.werewolfs.wereWolfDev.model.job.Hunter;
 import com.wf.werewolfs.wereWolfDev.model.job.Idiot;
 import com.wf.werewolfs.wereWolfDev.model.job.Knight;
-import com.wf.werewolfs.wereWolfDev.model.job.Magician;
 import com.wf.werewolfs.wereWolfDev.model.job.PrettyWolf;
 import com.wf.werewolfs.wereWolfDev.model.job.Seer;
 import com.wf.werewolfs.wereWolfDev.model.job.Shaman;
@@ -50,7 +48,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private static final String TAG = "GameViewModel";
     private GameActivityNotify gameActivityNotify;
-    private DataModel dataModel = DataModel.getInstance();
+    private final DataModel dataModel = DataModel.getInstance();
 
     /**
      * 儲存使用者行為 當前被選擇對象 上一次被選擇對象(用於單選)
@@ -64,21 +62,21 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 身分與職業
      */
-    private Wolf wolves = new Wolf();
-    private Witch witch = new Witch();
-    private Seer seer = new Seer();
-    private Guard guard = new Guard();
-    private Hunter hunter = new Hunter();
-    private Bear bear = new Bear();
-    private Knight knight = new Knight();
-    private Idiot idiot = new Idiot();
-    private HiddenWolf hiddenWolf = new HiddenWolf();
-    private ForbiddenElder forbiddenElder = new ForbiddenElder();
-    private PrettyWolf prettyWolf = new PrettyWolf();
-    private Gargoyle gargoyle = new Gargoyle();
-    private Shaman shaman = new Shaman();
-    private TombKeeper tombKeeper = new TombKeeper();
-    private Magician magician = new Magician();
+    private final Wolf wolves = new Wolf();
+    private final Witch witch = new Witch();
+    private final Seer seer = new Seer();
+    private final Guard guard = new Guard();
+    private final Hunter hunter = new Hunter();
+    private final Bear bear = new Bear();
+    private final Knight knight = new Knight();
+    private final Idiot idiot = new Idiot();
+    private final HiddenWolf hiddenWolf = new HiddenWolf();
+    private final ForbiddenElder forbiddenElder = new ForbiddenElder();
+    private final PrettyWolf prettyWolf = new PrettyWolf();
+    private final Gargoyle gargoyle = new Gargoyle();
+    private final Shaman shaman = new Shaman();
+    private final TombKeeper tombKeeper = new TombKeeper();
+//    private final Magician magician = new Magician();
 
     /**
      * observable object
@@ -100,7 +98,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * variable
      */
-    private final Context mContext; //to avoid memory leaks, this must be an Application context
     private SoundMgr music;
     private ToggleButton[] tgBtnGroup;
     String message = "";
@@ -116,7 +113,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     public GameViewModel(@NonNull Application app) {
         super(app);
-        this.mContext = app.getApplicationContext();
         init();
     }
 
@@ -142,7 +138,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     }
 
     public void createSound() {
-        music = SoundMgr.getInstance(mContext);
+        music = SoundMgr.getInstance(getApplication().getApplicationContext());
     }
 
     public void setTgBtn(ToggleButton[] tgBtnGroup) {
@@ -200,7 +196,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 座位點擊事件
      */
-    private CompoundButton.OnCheckedChangeListener onSeatClick = ((buttonView, isChecked) -> {
+    private final CompoundButton.OnCheckedChangeListener onSeatClick = ((buttonView, isChecked) -> {
         int seat = findIndexByBtnArray(buttonView);
         Action stage = dataModel.getStage();
 
@@ -218,7 +214,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     private void checkedEvent(int seat, Action stage) {
         ToggleButton tgBtn = tgBtnGroup[seat];
-        HashMap<Action, Integer> seatRoleMap = dataModel.getGodRoleMap();
         switch (stage) {
             case 狼人:
                 setColorAndTextOn(tgBtn, "狼人", Color.BLUE);
@@ -326,7 +321,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         Action identity;
         switch (stage) {
             case 狼人:
-                seatsSelected.remove(new Integer(seat));
+                seatsSelected.remove(Integer.valueOf(seat));
                 break;
             case 殺人:
                 if (!dataModel.isFirstDay()) {
@@ -483,7 +478,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 處理玩家選擇行為顯示
      *
-     * @param selected
+     * @param selected 玩家點擊座位
      */
     public void choosePosition(int selected) {
         this.selected = selected;
@@ -497,7 +492,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 取消選取行為顯示內容
      *
-     * @param pos
+     * @param pos 應該取消的座位
      */
     public void setPositionFalse(int pos) {
         tgBtnGroup[pos].setChecked(false);
@@ -506,13 +501,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         } else {
             tgBtnGroup[pos].setBackgroundColor(Color.BLACK);
         }
-        tgBtnGroup[pos].setText(pos + "");
+        tgBtnGroup[pos].setText(String.valueOf(pos));
     }
 
     /**
      * 改變全部座位可否被點擊
      *
-     * @param bool
+     * @param bool true 全部可選 false相反
      */
     public void setAllSeatState(boolean bool) {
         for (int i = 1; i <= dataModel.getPeoCnt(); i++) {
@@ -542,9 +537,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 設置單個按鈕點開的顏色與文字
      *
-     * @param tgBtn
-     * @param text
-     * @param color
+     * @param tgBtn 單個toggle button 物件
+     * @param text  btn 文字
+     * @param color btn 顏色
      */
     public void setColorAndTextOn(ToggleButton tgBtn, String text, int color) {
         tgBtn.setTextOn(text);
@@ -554,8 +549,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 從按鈕群找到按鈕的index
      *
-     * @param btn
-     * @return
+     * @param btn 獲取某個Button的索引
+     * @return 索引
      */
     private int findIndexByBtnArray(CompoundButton btn) {
         for (int i = 0; i < tgBtnGroup.length; i++) {
@@ -567,7 +562,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 跳出中央選擇提示框
      *
-     * @param checkText
+     * @param checkText 提視窗文字
      */
     private void showCheckBtn(String checkText) {
         checkVisible.set(true);
@@ -611,14 +606,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 檢查玩家確認後腳色是否重複
      *
-     * @param seat
+     * @param seat 正在設置角色的座位
      */
     public void repeatSelectionCheck(int seat) {
-        if (dataModel.getGodRoleMap().values().contains(seat)
-                || dataModel.getWolfRoleMap().values().contains(seat)) {
+        if (dataModel.getGodRoleMap().containsValue(seat)
+                || dataModel.getWolfRoleMap().containsValue(seat)) {
             gameActivityNotify.notifyRepeatSelect();
-        } else {
-            return;
         }
     }
 
@@ -695,7 +688,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 第一天獲取發言順序(警長競選)
      *
-     * @return
+     * @return 發言順序首位
      */
     private int getSpeakOrder() {
         SimpleDateFormat sdf = new SimpleDateFormat("mm");
@@ -711,11 +704,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     /**
      * 根據昨晚死亡玩家選定對話文字
      *
-     * @param dieList
-     * @return
+     * @param dieList 今日死亡玩家座位
+     * @return 拼裝後白天顯示字串
      */
     public String checkDieList(List<Integer> dieList) {
-        String text = "";
+        String text;
         if (dieList.size() > 0) {
             text = "昨晚死亡玩家為 : " + dieList;
         } else {
@@ -806,9 +799,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 女巫:
                 if (!dataModel.isFirstDay()) {
-                    /**
-                     * 不是第一個輪次時，女巫可能沒有藥，控制女巫可以點選的座位
-                     */
+                    // 不是第一個輪次時，女巫可能沒有藥，控制女巫可以點選的座位
                     int seat = witch.getSeat();
                     if (dataModel.getDieList().contains(seat)) {
                         music.playSound(witch.openSound);
@@ -916,7 +907,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         if (!forbiddenElder.unChecked()) {
             int muted = forbiddenElder.getMuted();
             if (forbiddenElder.getMuted() != 0) {
-                tgBtnGroup[muted].setText(muted + "");
+                tgBtnGroup[muted].setText(String.valueOf(muted));
                 forbiddenElder.setMuted(0);
             }
         }
@@ -931,12 +922,11 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         List<Integer> dieList = dataModel.getDieList();
         int turn = dataModel.getTurn();
 
-        /**
-         * 目前玩家會死亡的狀況
-         * 1.被狼人刀 -> 女巫不救 且 守衛非守
-         * 2.被狼人刀 -> 被女巫救 -> 被守衛守
-         * 3.被女巫毒
-         */
+        // 目前玩家會死亡的狀況
+        // 1.被狼人刀 -> 女巫不救 且 守衛非守
+        // 2.被狼人刀 -> 被女巫救 -> 被守衛守
+        // 3.被女巫毒
+
         int knifeOn = wolves.getKnifeOn();
 
         boolean knifeOnGone = false;
@@ -1017,7 +1007,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         StringBuilder sb = new StringBuilder();
         List<Action> actionList = dataModel.getActionList();
         for (int i = 1; i < actionList.size(); i++) {
-            sb.append("座位" + i + ": " + actionList.get(i) + "\n");
+            String seatRole = "座位" + i + ": " + actionList.get(i) + "\n";
+            sb.append(seatRole);
         }
 
         // 不需要DataModel的資源了 初始化
