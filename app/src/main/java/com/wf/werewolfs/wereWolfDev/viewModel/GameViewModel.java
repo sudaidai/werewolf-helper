@@ -157,6 +157,12 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      */
     public void onCenterClick() {
         ctrlBtnField.clickable.set(false);
+
+        // 如果點擊中間按鈕前有點擊座位(顏色不同) 在進入下一個stage之前重置該座位顏色與文字
+        if (selected != 0) {
+            setPositionFalse(selected);
+        }
+
         if (dataModel.isDay()) {
             music.playSound(R.raw.howling);
             dataModel.dayEnd();
@@ -185,9 +191,6 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     closeYourEyes(prettyWolf);
                     break;
                 default:
-            }
-            if (selected != 0) {
-                setPositionFalse(selected);
             }
             initSelect();
             ctrlBtnField.text.set("夜晚");
