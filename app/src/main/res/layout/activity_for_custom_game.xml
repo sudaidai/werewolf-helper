@@ -180,21 +180,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_margin="1sp"
-                android:text="野孩子" />
+                android:text="野孩子"
+                android:visibility="gone" />
 
             <CheckBox
                 android:id="@+id/magician"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_margin="1sp"
-                android:text="魔術師" />
+                android:text="魔術師"
+                android:visibility="gone" />
 
             <CheckBox
                 android:id="@+id/bombMan"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:layout_margin="1sp"
-                android:text="炸彈人" />
+                android:text="炸彈人"
+                android:visibility="gone" />
 
             <CheckBox
                 android:id="@+id/tombKeeper"

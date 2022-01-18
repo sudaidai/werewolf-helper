@@ -11,6 +11,12 @@ import com.wf.werewolfs.wereWolfDev.model.Role;
 import java.util.HashMap;
 
 public class Shaman extends Role {
+
+    /**
+     * 使用冥想來查驗一名玩家的具體身份。 當通靈師查驗到機械狼人時
+     * ，將會顯示機械狼人學習到的身份，若機械狼人被查驗時尚未學習技能，則會顯示機械狼人。
+     */
+
     private static final String TAG = "Shaman";
 
     public Shaman(){

@@ -6,6 +6,13 @@ import com.wf.werewolfs.wereWolfDev.model.Role;
 
 public class Witch extends Role {
 
+    /**
+     * 女巫擁有一瓶解藥和一瓶毒藥。女巫使用解藥前，可以在晚上得知當晚被狼隊殺害的對象，
+     * 並決定是否使用解藥將其救活，但女巫不可以自救；
+     * 女巫也可以利用白天所得資訊，將懷疑的對象毒殺，該對象若為獵人或狼王死後不能發動技能。
+     * 解藥和毒藥不可以在同一夜使用
+     */
+
     private boolean hasHerbal;
     private boolean hasPoison;
 
@@ -16,6 +23,8 @@ public class Witch extends Role {
         stage = Action.女巫;
         hasHerbal = true;
         hasPoison = true;
+        isSaved = 0;
+        isPoisoned = 0;
         openSound = R.raw.witch_open;
         skillSound = R.raw.witch_skill;
         closeSound = R.raw.witch_close;

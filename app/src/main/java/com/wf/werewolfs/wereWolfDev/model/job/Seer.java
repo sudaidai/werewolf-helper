@@ -8,6 +8,10 @@ import com.wf.werewolfs.wereWolfDev.model.Role;
 
 public class Seer extends Role {
 
+    /**
+     * 每夜可以查驗一位存活玩家的所屬陣營，並在白天透過發言向好人報出資訊。
+     */
+
     public Seer(){
         stage = Action.預言家;
         openSound = R.raw.seer_open;

@@ -31,6 +31,7 @@ import com.wf.werewolfs.wereWolfDev.model.job.HiddenWolf;
 import com.wf.werewolfs.wereWolfDev.model.job.Hunter;
 import com.wf.werewolfs.wereWolfDev.model.job.Idiot;
 import com.wf.werewolfs.wereWolfDev.model.job.Knight;
+import com.wf.werewolfs.wereWolfDev.model.job.Magician;
 import com.wf.werewolfs.wereWolfDev.model.job.PrettyWolf;
 import com.wf.werewolfs.wereWolfDev.model.job.Seer;
 import com.wf.werewolfs.wereWolfDev.model.job.Shaman;
@@ -77,6 +78,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     private Gargoyle gargoyle = new Gargoyle();
     private Shaman shaman = new Shaman();
     private TombKeeper tombKeeper = new TombKeeper();
+    private Magician magician = new Magician();
 
     /**
      * observable object
