@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.wf.werewolfs.R;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
-import com.wf.werewolfs.wereWolfDev.constant.Static;
 import com.wf.werewolfs.wereWolfDev.model.DataModel;
 import com.wf.werewolfs.wereWolfDev.model.Role;
 

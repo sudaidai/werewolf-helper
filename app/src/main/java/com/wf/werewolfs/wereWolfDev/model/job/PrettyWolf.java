@@ -30,8 +30,4 @@ public class PrettyWolf extends Role {
     public int getLover() {
         return lover;
     }
-
-    public void setLover(int lover) {
-        this.lover = lover;
-    }
 }

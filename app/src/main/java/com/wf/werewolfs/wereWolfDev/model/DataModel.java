@@ -2,10 +2,8 @@ package com.wf.werewolfs.wereWolfDev.model;
 
 import android.util.Log;
 
-import com.wf.werewolfs.R;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
 import com.wf.werewolfs.wereWolfDev.constant.EndType;
-import com.wf.werewolfs.wereWolfDev.constant.Static;
 import com.wf.werewolfs.wereWolfDev.viewModel.GameNotify;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.List;
 public class DataModel {
 
     private static final String TAG = "DataModel";
-    private static DataModel instance = new DataModel();
+    private static final DataModel instance = new DataModel();
     private GameNotify gameNotify;
 
     private DataModel() {
@@ -38,7 +36,7 @@ public class DataModel {
     /**
      * 腳色有無
      */
-    private LinkedHashMap<Action, Boolean> roleMap = new LinkedHashMap<>();
+    private final LinkedHashMap<Action, Boolean> roleMap = new LinkedHashMap<>();
     /**
      * 遊戲規則
      */
@@ -55,14 +53,14 @@ public class DataModel {
     private int turn; //輪次
     private boolean gameEnd;
     private boolean hiddenWolfShowed;
-    private List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
-    private List<Integer> dieList = new ArrayList<>(); //死亡名單
+    private final List<Action> stageOrder = new ArrayList<>(); //該局遊戲順序
+    private final List<Integer> dieList = new ArrayList<>(); //死亡名單
 
-    private List<Action> actionList = new ArrayList(); //座位表對應職業
-    private HashMap<Action, Integer> godRoleMap = new HashMap<>(); //好人玩家對應的職業
-    private HashMap<Action, Integer> wolfRoleMap = new HashMap<>(); //狼人玩家對應的職業
-    private List<Integer> wolfGroup = new ArrayList<>(); //狼人名單
-    private List<Integer> villagers = new ArrayList<>(); //村民名單
+    private final List<Action> actionList = new ArrayList<>(); //座位表對應職業
+    private final HashMap<Action, Integer> godRoleMap = new HashMap<>(); //好人玩家對應的職業
+    private final HashMap<Action, Integer> wolfRoleMap = new HashMap<>(); //狼人玩家對應的職業
+    private final List<Integer> wolfGroup = new ArrayList<>(); //狼人名單
+    private final List<Integer> villagers = new ArrayList<>(); //村民名單
 
     public void setGameNotify(GameNotify gameNotify) {
         this.gameNotify = gameNotify;
@@ -121,24 +119,12 @@ public class DataModel {
         this.witchSaveRule = witchSaveRule;
     }
 
-    public boolean isGameEndRule() {
-        return gameEndRule;
-    }
-
     public void setGameEndRule(boolean gameEndRule) {
         this.gameEndRule = gameEndRule;
     }
 
-    public boolean isPrettyWolfRule() {
-        return prettyWolfRule;
-    }
-
     public void setPrettyWolfRule(boolean prettyWolfRule) {
         this.prettyWolfRule = prettyWolfRule;
-    }
-
-    public boolean isHunterKillRule() {
-        return hunterKillRule;
     }
 
     public void setHunterKillRule(boolean hunterKillRule) {
@@ -228,7 +214,7 @@ public class DataModel {
     /**
      * 獲知玩家死亡，加入死亡名單
      *
-     * @param seat
+     * @param seat 已確認死亡座位
      */
     public void playerDead(int seat) {
         dieList.add(seat);
@@ -266,18 +252,15 @@ public class DataModel {
             if (godRoleMap.size() + villagers.size() + wolfDeadCnt == dieList.size()) {
                 gameNotify.notifyGameEnd(EndType.屠城);
                 gameEnd = true;
-                return;
             }
         } else {
             //屠邊
             if (dieList.containsAll(villagers)) {
                 gameNotify.notifyGameEnd(EndType.屠民);
                 gameEnd = true;
-                return;
             } else if (dieList.containsAll(godRoleMap.values())) {
                 gameNotify.notifyGameEnd(EndType.屠神);
                 gameEnd = true;
-                return;
             }
         }
     }
@@ -293,8 +276,8 @@ public class DataModel {
     /**
      * 判斷這場遊戲有沒有這個階段
      *
-     * @param stage
-     * @return
+     * @param stage 階段
+     * @return 有無
      */
     public boolean hasStage(Action stage) {
         return stageOrder.contains(stage);
@@ -302,8 +285,6 @@ public class DataModel {
 
     /**
      * 判斷是不是狼人死光了，刀子在地上
-     *
-     * @return
      */
     public boolean wolvesDead() {
         return dieList.containsAll(wolfGroup);

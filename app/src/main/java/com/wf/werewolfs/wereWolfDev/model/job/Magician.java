@@ -14,7 +14,7 @@ public class Magician extends Role {
      * 但是一場遊戲裡面，每一個人只能被交換一次。
      */
 
-    private List<Integer> unchangeable;
+    private final List<Integer> unchangeable;
 
     private int seat1;
     private int seat2;

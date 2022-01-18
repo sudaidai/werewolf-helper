@@ -45,10 +45,7 @@ public class Witch extends Role {
     }
 
     public boolean hasMedicine() {
-        if (!hasHerbal && !hasPoison) {
-            return false;
-        }
-        return true;
+        return hasHerbal || hasPoison;
     }
 
     public boolean hasHerbal() {

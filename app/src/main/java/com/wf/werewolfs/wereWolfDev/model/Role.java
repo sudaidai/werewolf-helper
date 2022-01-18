@@ -25,8 +25,4 @@ public class Role {
     public void killed() {
         isAlive = false;
     }
-
-    public boolean activeSkill() {
-        return false;
-    }
 }

@@ -21,7 +21,7 @@ public class Seer extends Role {
     }
 
     /**
-     * @param seat
+     * @param seat 查驗座位
      * @return true狼人 false金水
      */
     public boolean see(int seat) {
@@ -37,9 +37,7 @@ public class Seer extends Role {
                 }
             }
 
-            if (action != Action.隱狼) {
-                return true;
-            }
+            return action != Action.隱狼;
         }
         return false;
     }

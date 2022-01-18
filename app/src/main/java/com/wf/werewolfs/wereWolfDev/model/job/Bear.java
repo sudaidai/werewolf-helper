@@ -2,7 +2,6 @@ package com.wf.werewolfs.wereWolfDev.model.job;
 
 import com.wf.werewolfs.R;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
-import com.wf.werewolfs.wereWolfDev.constant.Static;
 import com.wf.werewolfs.wereWolfDev.model.DataModel;
 import com.wf.werewolfs.wereWolfDev.model.Role;
 
@@ -50,10 +49,6 @@ public class Bear extends Role {
             }
         } while (dieList.contains(right));
 
-        if (wolfGroup.contains(right)) {
-            return true;
-        } else {
-            return false;
-        }
+        return wolfGroup.contains(right);
     }
 }
