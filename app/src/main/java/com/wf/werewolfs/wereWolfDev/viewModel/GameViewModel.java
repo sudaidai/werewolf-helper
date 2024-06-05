@@ -236,13 +236,13 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                         if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
                         } else if (witch.getSeat() == selected) {
-                            setColorAndTextOn(tgBtn, "不用藥?", Color.BLUE);
+                            setColorAndTextOn(tgBtn, "不用藥", Color.BLUE);
                         } else {
                             setColorAndTextOn(tgBtn, "毒殺?", Color.RED);
                         }
                     } else {
                         if (witch.getSeat() == selected) {
-                            setColorAndTextOn(tgBtn, "不用藥?", Color.BLUE);
+                            setColorAndTextOn(tgBtn, "不用藥", Color.BLUE);
                         } else if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
                         } else {
