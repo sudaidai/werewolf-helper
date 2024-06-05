@@ -929,15 +929,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
         int knifeOn = wolves.getKnifeOn();
 
-        boolean knifeOnGone = false;
-        if (knifeOn != witch.getIsSave() && knifeOn != guard.getIsProtected()) {
-            // 1.被狼人刀 -> 女巫不救 且 守衛非守
-            knifeOnGone = true;
-        } else if (knifeOn == witch.getIsSave() && knifeOn == guard.getIsProtected()) {
-            // 2.被狼人刀 -> 被女巫救 -> 被守衛守
-            knifeOnGone = true;
-            witch.setIsSave(0);
-        }
+        boolean knifeOnGone =
+                (knifeOn == witch.getIsSave() && knifeOn == guard.getIsProtected()) ||
+                (knifeOn != witch.getIsSave() && knifeOn != guard.getIsProtected());
 
         if (knifeOnGone) {
             dataModel.playerDead(knifeOn);
@@ -953,6 +947,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 dieList_today.add(isPoisoned);
             }
             witch.setIsPoisoned(0);
+        }
+
+        if (witch.getIsSave() != 0) {
+            witch.setIsSave(0);
         }
 
         Collections.sort(dieList_today);
