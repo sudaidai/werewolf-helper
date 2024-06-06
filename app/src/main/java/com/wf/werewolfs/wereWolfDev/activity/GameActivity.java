@@ -97,7 +97,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
     }
 
     public void tgBtnInit(ToggleButton tgBtn) {
-        tgBtn.setText(tgBtn.getId() + "");
+        tgBtn.setText(String.valueOf(tgBtn.getId()));
         tgBtn.setTextOn(tgBtn.getId() + "");
         tgBtn.setTextOff(tgBtn.getId() + "");
         tgBtn.setBackgroundColor(Color.WHITE);
@@ -112,7 +112,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         new AlertDialog.Builder(this).setCancelable(false)
                 .setIcon(R.drawable.ic_launcher_background)
                 .setTitle("身分重複")
-                .setMessage("" + "遊戲自動重新開始，別亂按好嗎 (☞ﾟ∀ﾟ)ﾟ∀ﾟ)☞")
+                .setMessage("遊戲自動重新開始，別亂按好嗎 (☞ﾟ∀ﾟ)ﾟ∀ﾟ)☞")
                 .setPositiveButton("ok", (dialog, which) -> {
                     gameViewModel.initGameVariable();
                     finish();
@@ -125,12 +125,12 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
         String seerMessage = "";
         ImageView iv = new ImageView(this);
         if (isWolf) {
-            seerMessage = seat + "號玩家是位骯髒的狼人OvO";
-            iv.setImageResource(R.drawable.night);
+            seerMessage = seat + "號玩家是位狼人OvO";
+            iv.setImageResource(R.drawable.werewolf);
 
         } else {
             seerMessage = seat + "號玩家是位正直的好人●v●";
-            iv.setImageResource(R.drawable.day);
+            iv.setImageResource(R.drawable.not_werewolf);
         }
 
         AlertDialog seerDialog = new AlertDialog.Builder(GameActivity.this)
