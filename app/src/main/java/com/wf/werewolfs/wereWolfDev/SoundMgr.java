@@ -1,7 +1,4 @@
 package com.wf.werewolfs.wereWolfDev;
-/**
- * 用途 : 語音
- */
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -18,15 +15,13 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class SoundMgr implements MediaPlayer.OnCompletionListener {
 
     private static volatile SoundMgr instance;
-
     private static final String TAG = "Sound";
     private final Context mContext;
-    public MediaPlayer mediaPlayer; //播放中
+    public MediaPlayer mediaPlayer; // Currently playing
     public MediaPlayer cd;
     private SoundPool sp;
-    private HashMap<Integer, Integer> soundID = new HashMap<Integer, Integer>();
-    private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(10);
-
+    private HashMap<Integer, Integer> soundID = new HashMap<>();
+    private ArrayBlockingQueue<MediaPlayer> queue = new ArrayBlockingQueue<>(20);
 
     public static SoundMgr getInstance(Context context) {
         if (instance == null) {
@@ -40,20 +35,21 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener {
     }
 
     private SoundMgr(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mediaPlayer = new MediaPlayer();
-        mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setWakeMode(mContext, PowerManager.PARTIAL_WAKE_LOCK);
     }
 
     public void playSound(int _id) {
         Log.d(TAG, "play -> " + _id);
-
-        if (mediaPlayer.isPlaying()) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             cd = MediaPlayer.create(mContext, _id);
             cd.setOnCompletionListener(this);
             queue.offer(cd);
         } else {
-            mediaPlayer.release();
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+            }
             mediaPlayer = MediaPlayer.create(mContext, _id);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.start();
@@ -61,8 +57,9 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener {
     }
 
     public void cancelSound() {
-        if (mediaPlayer.isPlaying()) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
+            mediaPlayer.reset();
         }
     }
 
@@ -75,13 +72,28 @@ public class SoundMgr implements MediaPlayer.OnCompletionListener {
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
-        //只要完成播放 檢查queue 有聲音在排隊的話 拿出來播放
         if (queue.peek() != null) {
             mediaPlayer.release();
             Log.d(TAG, "onCompletion: playing next sound.");
             mediaPlayer = queue.poll();
-            mediaPlayer.start();
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
+            }
+        } else {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
+    }
+
+    public void release() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if (sp != null) {
+            sp.release();
+            sp = null;
+        }
+        queue.clear();
     }
 }
