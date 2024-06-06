@@ -14,6 +14,7 @@ public class Knight extends Role {
 
     public Knight() {
         stage = Action.騎士;
+        imageId = R.drawable.knight;
         openSound = R.raw.knight_open;
         closeSound = R.raw.knight_close;
     }

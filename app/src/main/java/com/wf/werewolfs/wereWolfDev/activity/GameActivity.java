@@ -203,7 +203,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
     @Override
     public void notifyWolfFriend(List<Integer> wolfGroup) {
         new AlertDialog.Builder(this).setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_background)
+                .setIcon(R.drawable.werewolf)
                 .setTitle(wolfGroup + " 是你的狼隊友")
                 .setPositiveButton("ok", null)
                 .show();
@@ -212,7 +212,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
     @Override
     public void notifyPrettyWolfDead(int lover) {
         new AlertDialog.Builder(this).setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_background)
+                .setIcon(R.drawable.dead_with_pretty)
                 .setTitle(lover + " 玩家殉情了♥...")
                 .setPositiveButton("ok", null)
                 .show();
@@ -222,7 +222,7 @@ public class GameActivity extends AppCompatActivity implements GameActivityNotif
     public void notifySeeThrough(Action identity, int seat, Role role) {
         AlertDialog seeThroughDialogue = new AlertDialog.Builder(GameActivity.this)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_background)
+                .setIcon(identity.role.imageId)
                 .setTitle(seat + "號玩家為:" + identity)
                 .setPositiveButton("ok", null)
                 .create();

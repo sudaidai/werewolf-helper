@@ -13,6 +13,7 @@ public class Idiot extends Role {
 
     public Idiot() {
         stage = Action.白癡;
+        imageId = R.drawable.idiot;
         openSound = R.raw.idiot_open;
         closeSound = R.raw.idiot_close;
     }

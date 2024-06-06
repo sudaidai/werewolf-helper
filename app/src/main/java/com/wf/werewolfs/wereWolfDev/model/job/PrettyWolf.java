@@ -18,6 +18,7 @@ public class PrettyWolf extends Role {
     public PrettyWolf() {
         lover = 0;
         stage = Action.狼美人;
+        imageId = R.drawable.pretty_wolf;
         openSound = R.raw.prettywolf_open;
         skillSound = R.raw.prettywolf_skill;
         closeSound = R.raw.prettywolf_close;

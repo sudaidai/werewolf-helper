@@ -13,6 +13,7 @@ public class HiddenWolf extends Role {
 
     public HiddenWolf() {
         stage = Action.隱狼;
+        imageId = R.drawable.hidden_wolf;
         openSound = R.raw.hidden_open;
         closeSound = R.raw.hidden_close;
     }

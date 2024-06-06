@@ -15,6 +15,7 @@ public class Guard extends Role {
     public Guard() {
         isProtected = 0;
         stage = Action.守衛;
+        imageId = R.drawable.guard;
         openSound = R.raw.guard_open;
         skillSound = R.raw.guard_skill;
         closeSound = R.raw.guard_close;

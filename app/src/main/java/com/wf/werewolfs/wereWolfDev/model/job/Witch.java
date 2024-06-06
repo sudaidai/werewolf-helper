@@ -21,6 +21,7 @@ public class Witch extends Role {
 
     public Witch() {
         stage = Action.女巫;
+        imageId = R.drawable.witch;
         hasHerbal = true;
         hasPoison = true;
         isSaved = 0;

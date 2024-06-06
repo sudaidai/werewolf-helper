@@ -15,6 +15,7 @@ public class Wolf extends Role {
     public Wolf() {
         knifeOn = 0;
         stage = Action.狼人;
+        imageId = R.drawable.werewolf;
         openSound = R.raw.wolf_open;
         openSound = R.raw.wolf_close;
     }

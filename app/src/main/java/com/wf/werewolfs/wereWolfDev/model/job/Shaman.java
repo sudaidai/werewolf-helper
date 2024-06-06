@@ -20,6 +20,7 @@ public class Shaman extends Role {
 
     public Shaman() {
         stage = Action.通靈師;
+        imageId = R.drawable.shaman;
         openSound = R.raw.shaman_open;
         closeSound = R.raw.shaman_close;
         skillSound = R.raw.shaman_skill;

@@ -3,9 +3,7 @@ package com.wf.werewolfs.wereWolfDev.activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -13,10 +11,8 @@ import androidx.databinding.DataBindingUtil;
 import com.wf.werewolfs.R;
 import com.wf.werewolfs.databinding.ActivityForCustomGameBinding;
 import com.wf.werewolfs.wereWolfDev.constant.Action;
-import com.wf.werewolfs.wereWolfDev.constant.Static;
 import com.wf.werewolfs.wereWolfDev.model.DataModel;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class ActivityForCustomGame extends AppCompatActivity {

@@ -9,6 +9,7 @@ public class Role {
     private int seat = 0;
     public boolean isAlive = true;
     public Action stage;
+    public int imageId;
 
     public int getSeat() {
         return seat;

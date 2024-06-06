@@ -15,6 +15,7 @@ public class Seer extends Role {
 
     public Seer() {
         stage = Action.預言家;
+        imageId = R.drawable.seer;
         openSound = R.raw.seer_open;
         skillSound = R.raw.seer_skill;
         closeSound = R.raw.seer_close;

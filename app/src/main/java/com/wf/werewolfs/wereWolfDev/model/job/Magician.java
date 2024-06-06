@@ -23,6 +23,7 @@ public class Magician extends Role {
         stage = Action.魔術師;
         seat1 = 0;
         seat2 = 0;
+        imageId = R.drawable.magician;
         openSound = R.raw.magic_open;
         skillSound = R.raw.magic_skill;
         closeSound = R.raw.magic_close;

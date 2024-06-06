@@ -13,6 +13,7 @@ public class Hunter extends Role {
 
     public Hunter() {
         stage = Action.獵人;
+        imageId = R.drawable.hunter;
         openSound = R.raw.hunter_open;
         closeSound = R.raw.hunter_close;
     }

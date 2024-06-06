@@ -15,6 +15,7 @@ public class TombKeeper extends Role {
 
     public TombKeeper() {
         stage = Action.守墓人;
+        imageId = R.drawable.tombkeeper;
         openSound = R.raw.tomb_open;
         closeSound = R.raw.tomb_close;
     }

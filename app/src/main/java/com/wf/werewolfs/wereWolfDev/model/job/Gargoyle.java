@@ -20,6 +20,7 @@ public class Gargoyle extends Role {
 
     public Gargoyle() {
         stage = Action.石像鬼;
+        imageId = R.drawable.gargoyle;
         openSound = R.raw.ghost_open;
         closeSound = R.raw.ghost_close;
         skillSound = R.raw.ghost_skill;

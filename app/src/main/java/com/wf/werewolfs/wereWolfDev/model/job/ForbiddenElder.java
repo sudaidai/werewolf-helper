@@ -16,6 +16,7 @@ public class ForbiddenElder extends Role {
     public ForbiddenElder() {
         muted = 0;
         stage = Action.禁言長老;
+        imageId = R.drawable.forbidden_elder;
         openSound = R.raw.elder_open;
         closeSound = R.raw.elder_close;
         skillSound = R.raw.elder_skill;
