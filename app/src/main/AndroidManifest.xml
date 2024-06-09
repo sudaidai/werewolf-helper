@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".wereWolfDev.activity.StartActivity"
+        <activity android:name=".android.activity.StartActivity"
                   android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,13 +19,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".wereWolfDev.activity.ActivityForCustomGame"
+            android:name=".android.activity.ActivityForCustomGame"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".wereWolfDev.activity.GameActivity"
+            android:name=".android.activity.GameActivity"
             android:screenOrientation="landscape"/>
         <activity
-            android:name=".wereWolfDev.activity.ActivityForNumOfPeople"
+            android:name=".android.activity.ActivityForNumOfPeople"
             android:screenOrientation="portrait"/>
     </application>
 </manifest>
