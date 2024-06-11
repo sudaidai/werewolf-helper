@@ -185,6 +185,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 case 狼美人:
                     prettyWolf.charm(0);
                     closeYourEyes(prettyWolf);
+                    initSeatState();
                     break;
                 default:
             }
@@ -510,6 +511,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * @param bool true 全部可選 false相反
      */
     public void setAllSeatState(boolean bool) {
+        Log.d(TAG, "Set up seat state to " + bool);
         for (int i = 1; i <= dataModel.getPeoCnt(); i++) {
             tgBtnGroup[i].setClickable(bool);
         }
@@ -791,6 +793,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
                 }
                 if (dataModel.wolvesDead()) {
+                    Log.d(TAG, "Knife on the ground.");
                     setAllSeatState(false);
                     skipStage();
                 } else {
