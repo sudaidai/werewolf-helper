@@ -184,8 +184,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     break;
                 case 狼美人:
                     prettyWolf.charm(0);
-                    closeYourEyes(prettyWolf);
                     initSeatState();
+                    closeYourEyes(prettyWolf);
                     break;
                 default:
             }
@@ -914,8 +914,9 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 forbiddenElder.setMuted(0);
             }
         }
-        dataModel.setNextStage();
+
         initSeatState();
+        dataModel.setNextStage();
     }
 
     @Override
