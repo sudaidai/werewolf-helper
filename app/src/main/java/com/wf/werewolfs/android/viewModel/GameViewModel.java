@@ -591,7 +591,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * 進入下一階段，開眼與閉眼間格時間，請玩家睜眼
      */
     public void stageDelay(Action stage, Role role) {
-        new CountDownTimer(5000, 1000) {
+        new CountDownTimer(6000, 1000) {
             public void onTick(long millisUntilFinished) {
                 announcement.set(String.valueOf(millisUntilFinished / 1000));
             }
@@ -918,7 +918,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
     @Override
     public void notifyNightEnd() {
         message = "";
-        List<Integer> dieList_today = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
+        List<Integer> dieListToday = new ArrayList<>(); //存放當晚死亡玩家 用於文字顯示
         List<Integer> dieList = dataModel.getDieList();
         int turn = dataModel.getTurn();
 
@@ -935,16 +935,16 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
         if (knifeOnGone) {
             dataModel.playerDead(knifeOn);
-            dieList_today.add(knifeOn);
+            dieListToday.add(knifeOn);
         }
 
         int isPoisoned = witch.getIsPoisoned();
         if (isPoisoned != 0) {
             // 3.被女巫毒
-            if (!dieList_today.contains(isPoisoned)) {
+            if (!dieListToday.contains(isPoisoned)) {
                 //被毒的人未死，加入死亡名單
                 dataModel.playerDead(isPoisoned);
-                dieList_today.add(isPoisoned);
+                dieListToday.add(isPoisoned);
             }
             witch.setIsPoisoned(0);
         }
@@ -953,8 +953,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             witch.setIsSave(0);
         }
 
-        Collections.sort(dieList_today);
-        Log.d(TAG, "dieList(today) -> " + dieList_today);
+        Collections.sort(dieListToday);
+        Log.d(TAG, "dieList(today) -> " + dieListToday);
 
         if (turn == 1) {
             int speakOrder = getSpeakOrder();
@@ -967,7 +967,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             }
             message = "競選警長階段\n根據現在時間由" + speakOrder + "號玩家\"" + str + "\"開始發言";
         } else {
-            message = checkDieList(dieList_today);
+            message = checkDieList(dieListToday);
         }
 
         if (!bear.unChecked() && bear.isAlive) {
@@ -992,7 +992,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
             @Override
             public void onFinish() {
-                dayBreak(dieList_today, turn);
+                dayBreak(dieListToday, turn);
             }
         }.start();
         dataModel.nextTurn();
