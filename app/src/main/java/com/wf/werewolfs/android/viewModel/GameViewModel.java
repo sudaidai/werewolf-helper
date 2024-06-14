@@ -163,34 +163,45 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             music.playSound(R.raw.howling);
             dataModel.dayEnd();
         } else {
+            Role actRole = null;
             switch (dataModel.getStage()) {
                 case 女巫:
-                    closeYourEyes(witch);
+                    actRole = witch;
                     break;
                 case 預言家:
-                    closeYourEyes(seer);
+                    actRole = seer;
                     break;
                 case 守衛:
-                    if (guard.getSeat() == 0) {
+                    actRole = guard;
+                    if (guard.unChecked()) {
                         //避免守衛未確認身分按空守
                         return;
                     }
                     guard.protect(0);
-                    closeYourEyes(guard);
                     break;
                 case 禁言長老:
+                    actRole = forbiddenElder;
                     forbiddenElder.mute(0);
-                    closeYourEyes(forbiddenElder);
                     break;
                 case 狼美人:
+                    actRole = prettyWolf;
                     prettyWolf.charm(0);
                     initSeatState();
-                    closeYourEyes(prettyWolf);
                     break;
+                case 獵人:
+                    actRole = hunter;
+                    if (!hunter.unChecked()) {
+                        hunter.shoot(0);
+                    } else {
+                        ctrlBtnField.clickable.set(true);
+                    }
                 default:
             }
             initSelect();
             ctrlBtnField.text.set("夜晚");
+            if (actRole != null && !(actRole == hunter && hunter.unChecked())) {
+                closeYourEyes(actRole);
+            }
         }
     }
 
@@ -300,6 +311,14 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                     setColorAndTextOn(tgBtn, "看透", Color.GRAY);
                 }
                 break;
+            case 獵人:
+                choosePosition(seat);
+                if (hunter.unChecked()) {
+                    setColorAndTextOn(tgBtn, "獵人", Color.BLUE);
+                } else {
+                    setColorAndTextOn(tgBtn, "開槍", Color.RED);
+                }
+                break;
             case 白天:
                 choosePosition(seat);
                 setColorAndTextOn(tgBtn, "確認", Color.GREEN);
@@ -374,8 +393,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 }
                 break;
             case 獵人:
-                setSeat(hunter, seat, true);
-                closeYourEyes(hunter);
+                if (hunter.unChecked()) {
+                    setSeat(hunter, seat, true);
+                    hunterCheck();
+                } else {
+                    hunter.shoot(seat);
+                    ctrlBtnField.text.set("夜晚");
+                    ctrlBtnField.clickable.set(false);
+                    closeYourEyes(hunter);
+                }
                 break;
             case 熊:
                 setSeat(bear, seat, true);
@@ -496,6 +522,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
      * @param pos 應該取消的座位
      */
     public void setPositionFalse(int pos) {
+        tgBtnGroup[pos].setOnCheckedChangeListener(null);
+
         tgBtnGroup[pos].setChecked(false);
         if (dataModel.isDay()) {
             tgBtnGroup[pos].setBackgroundColor(Color.WHITE);
@@ -503,6 +531,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             tgBtnGroup[pos].setBackgroundColor(Color.BLACK);
         }
         tgBtnGroup[pos].setText(String.valueOf(pos));
+        tgBtnGroup[pos].setOnCheckedChangeListener(onSeatClick);
     }
 
     /**
@@ -845,6 +874,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 獵人:
                 openYourEyes(hunter);
+                ctrlBtnField.clickable.set(true);
+                if (!dataModel.isFirstDay()) {
+                    hunterCheck();
+                }
                 break;
             case 熊:
                 openYourEyes(bear);
@@ -953,6 +986,15 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             witch.setIsPoisoned(0);
         }
 
+        int bulletOn = hunter.getBulletOn();
+        if (!hunter.isAlive && bulletOn != 0) {
+            if (!dieListToday.contains(bulletOn)) {
+                dataModel.playerDead(bulletOn);
+                dieListToday.add(bulletOn);
+            }
+            hunter.shoot(0);
+        }
+
         if (witch.getIsSave() != 0) {
             witch.setIsSave(0);
         }
@@ -1020,10 +1062,30 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
 
     @Override
     public void notifyShowHiddenWolf() {
-        int seat = hiddenWolf.getSeat();
-        if (seat != 0) {
+        if (!hiddenWolf.unChecked()) {
             dataModel.getWolfRoleMap().remove(Action.隱狼);
-            dataModel.getWolfGroup().add(seat);
+            dataModel.getWolfGroup().add(hiddenWolf.getSeat());
+        }
+    }
+
+    public void hunterCheck() {
+        int hunterSeat = hunter.getSeat();
+        if (hunterSeat == wolves.getKnifeOn() && witch.getIsPoisoned() != hunterSeat &&
+                ((hunterSeat == witch.getIsSave() && hunterSeat == guard.getIsProtected()) ||
+                        (hunterSeat != witch.getIsSave() && hunterSeat != guard.getIsProtected()))) {
+            ctrlBtnField.text.set("悶槍");
+            hunter.killed();
+            initSeatState();
+        } else {
+            if (!dataModel.isFirstDay()) {
+                ctrlBtnField.text.set("點我跳過");
+            } else {
+                closeYourEyes(hunter);
+            }
+
+            if (!hunter.unChecked()) {
+                setAllSeatState(false);
+            }
         }
     }
 }

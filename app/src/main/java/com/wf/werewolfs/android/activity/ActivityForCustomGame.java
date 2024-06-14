@@ -133,13 +133,13 @@ public class ActivityForCustomGame extends AppCompatActivity {
         role_map.put(Action.魔術師, binding.magician.isChecked());
         role_map.put(Action.預言家, binding.seer.isChecked());
         role_map.put(Action.熊, binding.bear.isChecked());
+        role_map.put(Action.守衛, binding.guard.isChecked());
         role_map.put(Action.獵人, binding.hunter.isChecked());
         role_map.put(Action.騎士, binding.knight.isChecked());
         role_map.put(Action.白癡, binding.idiot.isChecked());
         role_map.put(Action.炸彈人, binding.bombMan.isChecked());
         role_map.put(Action.禁言長老, binding.forbiddenElder.isChecked());
         role_map.put(Action.守墓人, binding.tombKeeper.isChecked());
-        role_map.put(Action.守衛, binding.guard.isChecked());
         role_map.put(Action.野孩子, binding.wildChild.isChecked());
         role_map.put(Action.混血兒, false);
         role_map.put(Action.盜賊, false);

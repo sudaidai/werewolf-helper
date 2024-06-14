@@ -6,7 +6,7 @@ public class Role {
     public int openSound = -1;
     public int skillSound = -1;
     public int closeSound = -1;
-    private int seat = 0;
+    private int seat = -1;
     public boolean isAlive = true;
     public Action stage;
     public int imageId;
@@ -20,7 +20,7 @@ public class Role {
     }
 
     public boolean unChecked() {
-        return seat == 0;
+        return seat == -1;
     }
 
     public void killed() {

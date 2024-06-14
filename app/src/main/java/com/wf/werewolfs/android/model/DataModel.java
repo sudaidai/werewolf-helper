@@ -218,7 +218,7 @@ public class DataModel {
      */
     public void playerDead(int seat) {
         dieList.add(seat);
-        if (dieList.containsAll(wolfGroup) && !hiddenWolfShowed) {
+        if (roleMap.get(Action.隱狼) && dieList.containsAll(wolfGroup) && !hiddenWolfShowed) {
             gameNotify.notifyShowHiddenWolf();
             hiddenWolfShowed = true;
         }

@@ -11,10 +11,22 @@ public class Hunter extends Role {
      * ，每晚法官會告訴你技能是否還在???。
      */
 
+    private int bulletOn = 0;
+
     public Hunter() {
         stage = Action.獵人;
         imageId = R.drawable.hunter;
         openSound = R.raw.hunter_open;
         closeSound = R.raw.hunter_close;
+    }
+
+    public int getBulletOn() {
+        return bulletOn;
+    }
+
+    public void shoot(int seat) {
+        if (getSeat() != seat) {
+            bulletOn = seat;
+        }
     }
 }
