@@ -243,7 +243,7 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 if (witch.unChecked()) {
                     setColorAndTextOn(tgBtn, "女巫", Color.BLUE);
                 } else {
-                    if (dataModel.isWitchSaveRule() && dataModel.isFirstDay()) {
+                    if (!dataModel.isWitchSaveRule() && dataModel.isFirstDay()) {
                         //女巫可以自救的情況
                         if (wolves.getKnifeOn() == seat && witch.hasHerbal()) {
                             setColorAndTextOn(tgBtn, "拯救?", Color.BLUE);
@@ -818,8 +818,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
                 break;
             case 殺人:
                 music.playSound(R.raw.wolf_kill);
-                if (!dataModel.isFirstDay()) {
-                    tgBtnGroup[wolves.getKnifeOn()].setClickable(false); //不能同刀
+                if (!dataModel.isFirstDay() && dataModel.getPeoCnt() <= 9) {
+                    tgBtnGroup[wolves.getKnifeOn()].setClickable(false); // 9人以下不能同刀
                 }
                 if (dataModel.wolvesDead()) {
                     Log.d(TAG, "Knife on the ground.");
