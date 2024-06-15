@@ -1078,13 +1078,10 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
             initSeatState();
         } else {
             if (!dataModel.isFirstDay()) {
+                setAllSeatState(false);
                 ctrlBtnField.text.set("點我跳過");
             } else {
                 closeYourEyes(hunter);
-            }
-
-            if (!hunter.unChecked()) {
-                setAllSeatState(false);
             }
         }
     }
