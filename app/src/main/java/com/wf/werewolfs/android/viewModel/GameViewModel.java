@@ -498,6 +498,8 @@ public class GameViewModel extends AndroidViewModel implements GameNotify {
         for (int seat : temp) {
             setPositionFalse(seat);
         }
+
+        seatsSelected.clear();
         checkVisible.set(false);
     }
 
